@@ -3,9 +3,10 @@ import Payhub
 
 /// Thin `URLSession` client for the few `/merchant/*` endpoints not yet covered
 /// by the `payhub-swift` 1.1.0 SDK:
-///   • `POST   /merchant/devices`               — register an APNs device token
-///   • `DELETE /merchant/devices?token=…`        — unregister it
-///   • `GET    /merchant/dashboard?group_by=sub` — per-shop breakdown (the SDK's
+///   • `POST   /merchant/devices`                  — register an APNs device token
+///   • `DELETE /merchant/devices` (body `{token}`) — unregister it (token in the
+///     JSON body, not a query string, so it never lands in WAF/access logs)
+///   • `GET    /merchant/dashboard?group_by=sub`   — per-shop breakdown (the SDK's
 ///     `MerchantDashboard` model doesn't expose `sub_breakdown`)
 ///
 /// TODO(payhub): drop this once SDK 1.2 adds device registration + a
@@ -24,8 +25,8 @@ struct MerchantRawAPI {
     }
 
     func unregisterDevice(apnsTokenHex: String) async throws {
-        _ = try await send(method: "DELETE", path: "/merchant/devices",
-                           query: [URLQueryItem(name: "token", value: apnsTokenHex)], body: nil)
+        let body = try JSONEncoder().encode(["token": apnsTokenHex])
+        _ = try await send(method: "DELETE", path: "/merchant/devices", query: nil, body: body)
     }
 
     // MARK: Dashboard breakdown

@@ -12,7 +12,7 @@ import Combine
 ///   3. `AppDelegate.didRegisterForRemoteNotificationsWithDeviceToken` hands the
 ///      APNs token back here via `didReceiveAPNsToken(_:)`, which (if logged in)
 ///      POSTs it to `/merchant/devices`.
-///   4. Toggle-off → `disable()` → `DELETE /merchant/devices?token=…`.
+///   4. Toggle-off → `disable()` → `DELETE /merchant/devices` (token in the body).
 ///
 /// APNs prerequisites (provisioning, not in this repo): an App ID with the
 /// "Push Notifications" capability and an APNs auth key `.p8` configured on the
