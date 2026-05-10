@@ -1,0 +1,128 @@
+# XcodeGen project spec for "PayHub Merchant" — the native iOS app.
+#
+# Generate the .xcodeproj with:
+#   brew install xcodegen
+#   xcodegen generate            # → PayHubMerchant.xcodeproj
+#   open PayHubMerchant.xcodeproj
+#
+# The .xcodeproj is intentionally NOT committed (see .gitignore) — regenerate
+# from this file. CI does this automatically.
+#
+# Dependency on the PayHub Swift SDK: until `payhub-swift` 1.1.0 is published
+# to the `safwatech/payhub-swift` GitHub mirror, we depend on the in-repo copy
+# via a local `path:`. Once 1.1.0 is tagged, swap the `Payhub` package entry to:
+#   Payhub:
+#     url: https://github.com/safwatech/payhub-swift
+#     from: 1.1.0
+# (and drop this `apps/merchant-ios` tree out of the monorepo into its own
+# `safwatech/payhub-merchant-ios` repo — see README).
+
+name: PayHubMerchant
+
+options:
+  bundleIdPrefix: ly.payhub
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: "" # placeholder — set your Apple Developer team ID locally / in CI secrets
+    CODE_SIGN_STYLE: Automatic
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+packages:
+  Payhub:
+    path: ../../sdks/swift
+    # url: https://github.com/safwatech/payhub-swift   # ← switch to this once payhub-swift 1.1.0 is published
+    # from: 1.1.0
+
+targets:
+  PayHubMerchant:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    # XcodeGen auto-classifies `.xcassets` and `.strings` under `Sources` into the
+    # resources build phase, so a single source group covers everything; we only
+    # exclude the Info.plist (referenced via `info.path` below).
+    sources:
+      - path: Sources
+        excludes:
+          - "**/.DS_Store"
+          - "App/Info.plist"
+    dependencies:
+      - package: Payhub
+        product: Payhub
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ly.payhub.merchant
+        PRODUCT_NAME: PayHub Merchant
+        # Swift module name (no space) so `@testable import PayHubMerchant` works.
+        PRODUCT_MODULE_NAME: PayHubMerchant
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        TARGETED_DEVICE_FAMILY: "1" # iPhone only (1=iPhone, 2=iPad)
+        # SWIFT_STRICT_CONCURRENCY: targeted   # enable once the build is green and warnings are triaged
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+    info:
+      path: Sources/App/Info.plist
+      properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleDisplayName: "PayHub Merchant"
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIApplicationSupportsIndirectInputEvents: true
+        ITSAppUsesNonExemptEncryption: false
+        # Silent-push background mode for pay-link reminders (optional, harmless).
+        UIBackgroundModes:
+          - remote-notification
+        # Deep links: payhub://accept-invite?token=…&m=…&u=…&s=…  and pay-link taps from push.
+        CFBundleURLTypes:
+          - CFBundleURLName: ly.payhub.merchant
+            CFBundleURLSchemes:
+              - payhub
+        # Push: registers via UNUserNotificationCenter at runtime; the App ID
+        # must have the "Push Notifications" capability (provisioning, not here).
+        # NOTE: no aps-environment entitlement file is committed — Xcode injects it
+        # from the provisioning profile when you enable Push Notifications on the target.
+
+  PayHubMerchantTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - Tests/PayHubMerchantTests
+    dependencies:
+      - target: PayHubMerchant
+      - package: Payhub
+        product: Payhub
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ly.payhub.merchant.tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  PayHubMerchant:
+    build:
+      targets:
+        PayHubMerchant: all
+        PayHubMerchantTests: [test]
+    test:
+      targets:
+        - PayHubMerchantTests
+      gatherCoverageData: true
+    run:
+      config: Debug
+    archive:
+      config: Release

@@ -1,0 +1,70 @@
+/* PayHub Merchant — English strings.
+   The scaffold mostly uses inline literals; this file holds the handful of
+   strings worth centralising and is the seed for future localisation
+   (Arabic is planned — PayHub's web portal is bilingual EN/AR). */
+
+/* App */
+"app.name" = "PayHub Merchant";
+
+/* Tabs */
+"tab.dashboard" = "Dashboard";
+"tab.payLinks" = "Pay-links";
+"tab.more" = "More";
+
+/* Auth */
+"auth.signIn" = "Sign in";
+"auth.merchantCode" = "Merchant code";
+"auth.username" = "Username";
+"auth.password" = "Password";
+"auth.shopCode" = "Shop code (optional)";
+"auth.serverURL" = "Server URL";
+"auth.forgotPassword" = "Forgot password?";
+"auth.advanced" = "Advanced";
+"auth.mfa.title" = "Two-factor authentication";
+"auth.mfa.prompt" = "Enter the 6-digit code from your authenticator app.";
+"auth.mfa.verify" = "Verify";
+"auth.forgot.title" = "Reset password";
+"auth.forgot.send" = "Send reset link";
+"auth.forgot.sent" = "If that account exists, we've sent a password-reset link to its email address. Check your inbox.";
+"auth.invite.title" = "Accept invitation";
+"auth.invite.setPassword" = "Set password";
+
+/* Dashboard */
+"dashboard.title" = "Dashboard";
+"dashboard.paid" = "Paid";
+"dashboard.inflight" = "In flight";
+"dashboard.activePayLinks" = "Active pay-links";
+"dashboard.needsFollowup" = "Needs follow-up";
+"dashboard.byShop" = "By shop";
+"dashboard.otherOutcomes" = "Other outcomes";
+
+/* Pay-links */
+"payLinks.title" = "Pay-links";
+"payLinks.create" = "Create pay-link";
+"payLinks.empty.title" = "No pay-links yet";
+"payLinks.empty.body" = "Create a pay-link and share it — the customer picks how to pay.";
+"payLink.detail.title" = "Pay-link";
+"payLink.action.reshare" = "Re-share link";
+"payLink.action.extend" = "Extend expiry";
+"payLink.action.clone" = "Clone";
+"payLink.action.cancel" = "Cancel pay-link";
+"payLink.copy" = "Copy link";
+"payLink.share" = "Share link";
+
+/* More */
+"more.title" = "More";
+"more.profile" = "Profile";
+"more.plan" = "Plan";
+"more.notifications" = "Notifications";
+"more.pushToggle" = "Push notifications";
+"more.requestReset" = "Request password reset";
+"more.signOut" = "Sign out";
+"more.version" = "Version";
+"more.server" = "Server";
+
+/* Common */
+"common.cancel" = "Cancel";
+"common.done" = "Done";
+"common.ok" = "OK";
+"common.tryAgain" = "Try again";
+"common.retry" = "Retry";
