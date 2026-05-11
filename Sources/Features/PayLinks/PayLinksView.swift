@@ -36,6 +36,16 @@ struct PayLinksView: View {
         .onAppear {
             vm.bind(repository: repository)
             vm.onAppear()
+            // Replay a deep link that was parked before the view appeared (e.g.
+            // a pay-link tap that arrived pre-auth, while LoginView was up).
+            if let id = router.pendingPayLinkID {
+                path = [id]
+                router.pendingPayLinkID = nil
+            }
+            if let f = router.pendingPayLinkFilter {
+                vm.filter = f
+                router.pendingPayLinkFilter = nil
+            }
         }
         .onChange(of: router.pendingPayLinkID) { id in
             if let id { path = [id]; router.pendingPayLinkID = nil }

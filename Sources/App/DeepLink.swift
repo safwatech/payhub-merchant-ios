@@ -66,5 +66,10 @@ final class AppRouter: ObservableObject {
 }
 
 enum MainTab: Hashable {
-    case dashboard, payLinks, more
+    case dashboard, payLinks, payments, more
+}
+
+/// Routes that can be pushed onto the More tab's navigation stack.
+enum MoreRoute: Hashable {
+    case settlements
 }

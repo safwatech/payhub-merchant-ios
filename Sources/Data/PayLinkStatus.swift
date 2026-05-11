@@ -15,12 +15,12 @@ enum PayLinkStatus: String, CaseIterable {
 
     var label: String {
         switch self {
-        case .active:    return "Active"
-        case .paid:      return "Paid"
-        case .expired:   return "Expired"
-        case .cancelled: return "Cancelled"
-        case .refunded:  return "Refunded"
-        case .unknown:   return "Unknown"
+        case .active:    return NSLocalizedString("payLink.status.active", value: "Active", comment: "")
+        case .paid:      return NSLocalizedString("payLink.status.paid", value: "Paid", comment: "")
+        case .expired:   return NSLocalizedString("payLink.status.expired", value: "Expired", comment: "")
+        case .cancelled: return NSLocalizedString("payLink.status.cancelled", value: "Cancelled", comment: "")
+        case .refunded:  return NSLocalizedString("payLink.status.refunded", value: "Refunded", comment: "")
+        case .unknown:   return NSLocalizedString("payLink.status.unknown", value: "Unknown", comment: "")
         }
     }
 
@@ -49,12 +49,12 @@ enum PayLinkFilter: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .all:           return "All"
-        case .needsFollowup: return "Needs follow-up"
-        case .active:        return "Active"
-        case .paid:          return "Paid"
-        case .expired:       return "Expired"
-        case .cancelled:     return "Cancelled"
+        case .all:           return NSLocalizedString("payLink.filter.all", value: "All", comment: "")
+        case .needsFollowup: return NSLocalizedString("payLink.filter.needsFollowup", value: "Needs follow-up", comment: "")
+        case .active:        return NSLocalizedString("payLink.filter.active", value: "Active", comment: "")
+        case .paid:          return NSLocalizedString("payLink.filter.paid", value: "Paid", comment: "")
+        case .expired:       return NSLocalizedString("payLink.filter.expired", value: "Expired", comment: "")
+        case .cancelled:     return NSLocalizedString("payLink.filter.cancelled", value: "Cancelled", comment: "")
         }
     }
 

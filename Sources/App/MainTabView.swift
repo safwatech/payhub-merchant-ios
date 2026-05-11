@@ -8,15 +8,19 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $router.selectedTab) {
             DashboardView()
-                .tabItem { Label("Dashboard", systemImage: "chart.bar.xaxis") }
+                .tabItem { Label(LocalizedStringKey("tab.dashboard"), systemImage: "chart.bar.xaxis") }
                 .tag(MainTab.dashboard)
 
             PayLinksView()
-                .tabItem { Label("Pay-links", systemImage: "link") }
+                .tabItem { Label(LocalizedStringKey("tab.payLinks"), systemImage: "link") }
                 .tag(MainTab.payLinks)
 
+            PaymentsView()
+                .tabItem { Label(LocalizedStringKey("tab.payments"), systemImage: "creditcard") }
+                .tag(MainTab.payments)
+
             MoreView()
-                .tabItem { Label("More", systemImage: "ellipsis.circle") }
+                .tabItem { Label(LocalizedStringKey("tab.more"), systemImage: "ellipsis.circle") }
                 .tag(MainTab.more)
         }
     }

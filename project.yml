@@ -26,10 +26,18 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
   generateEmptyDirectories: true
+  # The PayHub web portal is bilingual EN/AR; the iOS app matches.
+  # `developmentRegion` decides the fallback when a key is missing from a locale.
+  developmentRegion: en
+
+knownRegions:
+  - en
+  - ar
+  - Base
 
 settings:
   base:
-    MARKETING_VERSION: "0.1.0"
+    MARKETING_VERSION: "0.2.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
     DEVELOPMENT_TEAM: "" # placeholder — set your Apple Developer team ID locally / in CI secrets
@@ -78,6 +86,10 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         CFBundleDisplayName: "PayHub Merchant"
+        CFBundleLocalizations:
+          - en
+          - ar
+        CFBundleDevelopmentRegion: en
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:

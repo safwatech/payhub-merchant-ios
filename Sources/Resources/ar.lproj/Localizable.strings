@@ -1,0 +1,210 @@
+/* PayHub Merchant — الترجمة العربية.
+
+   Labels are pulled from web/src/i18n/locales/ar.ts where the SPA already
+   covers the concept, so portal, PWA, Android and iOS speak the same Arabic.
+   Inline-English-literal keys (e.g. "Pay-links") are translated below the
+   structured-key block.
+*/
+
+/* ---- App ---- */
+"app.name" = "PayHub Merchant";
+
+/* ---- Tabs ---- */
+"tab.dashboard" = "لوحة المعلومات";
+"tab.payLinks" = "روابط الدفع";
+"tab.payments" = "المدفوعات";
+"tab.more" = "المزيد";
+
+/* ---- Common ---- */
+"common.cancel" = "إلغاء";
+"common.done" = "تم";
+"common.ok" = "حسناً";
+"common.tryAgain" = "حاول مرة أخرى";
+"common.retry" = "إعادة المحاولة";
+"common.loading" = "جارٍ التحميل…";
+"common.copied" = "تم النسخ";
+"common.copy" = "نسخ";
+"common.back" = "رجوع";
+"common.dash" = "—";
+
+/* ---- Auth ---- */
+"auth.signIn" = "تسجيل الدخول";
+"auth.merchantCode" = "رمز التاجر";
+"auth.username" = "اسم المستخدم";
+"auth.password" = "كلمة المرور";
+"auth.shopCode" = "رمز المتجر (اختياري)";
+"auth.serverURL" = "عنوان الخادم";
+"auth.forgotPassword" = "نسيت كلمة المرور؟";
+"auth.advanced" = "إعدادات متقدّمة";
+"auth.mfa.title" = "رمز التحقق الثنائي";
+"auth.mfa.prompt" = "أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة.";
+"auth.mfa.verify" = "تحقّق";
+"auth.forgot.title" = "إعادة تعيين كلمة المرور";
+"auth.forgot.send" = "إرسال رابط الإعادة";
+"auth.forgot.sent" = "إذا كان الحساب موجوداً فقد أرسلنا تعليمات إعادة التعيين عبر البريد. تفقّد صندوق الوارد.";
+"auth.invite.title" = "قبول الدعوة";
+"auth.invite.setPassword" = "تعيين كلمة المرور";
+
+/* ---- Dashboard ---- */
+"dashboard.title" = "لوحة المعلومات";
+"dashboard.paid" = "مدفوعة";
+"dashboard.inflight" = "قيد التنفيذ";
+"dashboard.activePayLinks" = "روابط دفع نشطة";
+"dashboard.needsFollowup" = "بحاجة لمتابعة";
+"dashboard.byShop" = "حسب المتجر";
+"dashboard.otherOutcomes" = "نتائج أخرى";
+
+/* ---- Pay-links ---- */
+"payLinks.title" = "روابط الدفع";
+"payLinks.create" = "إنشاء رابط دفع";
+"payLinks.empty.title" = "لا توجد روابط دفع بعد";
+"payLinks.empty.body" = "أنشئ رابط دفع وشاركه — العميل يختار طريقة الدفع.";
+"payLink.detail.title" = "رابط الدفع";
+"payLink.action.reshare" = "إعادة المشاركة";
+"payLink.action.extend" = "تمديد الصلاحية";
+"payLink.action.clone" = "استنساخ";
+"payLink.action.cancel" = "إلغاء الرابط";
+"payLink.copy" = "نسخ الرابط";
+"payLink.share" = "مشاركة الرابط";
+
+"payLink.status.active" = "نشط";
+"payLink.status.paid" = "مدفوع";
+"payLink.status.expired" = "منتهي";
+"payLink.status.cancelled" = "ملغى";
+"payLink.status.refunded" = "مُستردّ";
+"payLink.status.unknown" = "غير معروف";
+
+"payLink.filter.all" = "الكل";
+"payLink.filter.needsFollowup" = "بحاجة لمتابعة";
+"payLink.filter.active" = "نشط";
+"payLink.filter.paid" = "مدفوع";
+"payLink.filter.expired" = "منتهي";
+"payLink.filter.cancelled" = "ملغى";
+
+"relativeTime.expires" = "ينتهي %@";
+"relativeTime.expired" = "انتهى %@";
+
+/* ---- Payments ---- */
+"payments.title" = "المدفوعات";
+"payments.loading" = "جارٍ تحميل المدفوعات…";
+"payments.empty.title" = "لا توجد مدفوعات هنا";
+"payments.empty.all" = "ستظهر هنا المدفوعات التي يقوم بها عملاؤك.";
+"payments.empty.filtered" = "لا شيء يطابق هذا التصفية الآن.";
+
+"payment.status.pending" = "قيد الانتظار";
+"payment.status.requiresAction" = "بانتظار العميل";
+"payment.status.succeeded" = "مدفوعة";
+"payment.status.failed" = "فشلت";
+"payment.status.cancelled" = "ملغاة";
+"payment.status.refunded" = "مُستردة";
+"payment.status.unknown" = "غير معروفة";
+
+"payment.filter.all" = "الكل";
+"payment.filter.pending" = "قيد الانتظار";
+"payment.filter.requiresAction" = "بانتظار العميل";
+"payment.filter.succeeded" = "مدفوعة";
+"payment.filter.failed" = "فشلت";
+"payment.filter.cancelled" = "ملغاة";
+"payment.filter.refunded" = "مُستردة";
+
+"payment.detail.title" = "الدفعة";
+"payment.detail.orderRef" = "رقم الطلب";
+"payment.detail.psp" = "مزوّد الدفع";
+"payment.detail.pspRef" = "مرجع المزوّد";
+"payment.detail.customerMobile" = "هاتف العميل";
+"payment.detail.created" = "تاريخ الإنشاء";
+"payment.detail.lastUpdate" = "آخر تحديث";
+"payment.detail.viewPayLink" = "عرض رابط الدفع";
+"payment.detail.events" = "الأحداث";
+"payment.detail.noEvents" = "لم تُسجَّل أحداث بعد.";
+"payment.detail.metadata" = "البيانات الوصفية";
+
+/* ---- Settlements ---- */
+"settlements.title" = "التسويات";
+"settlements.loading" = "جارٍ التحميل…";
+"settlements.empty.title" = "لا توجد ملفات تسوية بعد";
+"settlements.empty.body" = "حين تُسلّم البوابة ملف تسوية، سيظهر هنا.";
+"settlements.uploadedAgo" = "رُفع %@";
+"settlements.matchedOfTotal" = "%1$d/%2$d مطابق";
+"settlements.mismatchCount" = "%d عدم تطابق";
+"settlements.detail.title" = "ملف التسوية";
+"settlements.detail.rows" = "الصفوف";
+"settlements.detail.noRows" = "لا توجد صفوف تطابق هذا التصفية.";
+"settlements.detail.period" = "الفترة: %1$@ → %2$@";
+"settlements.counter.total" = "الإجمالي";
+"settlements.counter.matched" = "مطابق";
+"settlements.counter.mismatch" = "عدم تطابق";
+"settlements.counter.missingInHub" = "مفقود — النظام";
+"settlements.counter.missingInPsp" = "مفقود — البوابة";
+"settlements.row.pspStatus" = "البوابة: %@";
+"settlements.row.filter.all" = "الكل";
+"settlements.row.filter.matched" = "مطابق";
+"settlements.row.filter.mismatch" = "عدم تطابق";
+"settlements.row.filter.missingInHub" = "مفقود في النظام";
+"settlements.row.filter.missingInPsp" = "مفقود لدى البوابة";
+"settlements.diffRow" = "%1$@ — النظام: %2$@ · البوابة: %3$@";
+"settlements.diffMore" = "+%d آخر";
+
+/* ---- More ---- */
+"more.title" = "المزيد";
+"more.profile" = "الملف التعريفي";
+"more.plan" = "الخطة";
+"more.notifications" = "الإشعارات";
+"more.pushToggle" = "إشعارات الدفع";
+"more.requestReset" = "طلب إعادة تعيين كلمة المرور";
+"more.signOut" = "تسجيل الخروج";
+"more.version" = "الإصدار";
+"more.server" = "الخادم";
+"more.reports" = "التقارير";
+"more.settlements" = "التسويات";
+"more.settlements.hint" = "ملفات المطابقة مع مدفوعاتك";
+
+/* ---- Push fallbacks ---- */
+"push.fallback.title" = "PayHub";
+"push.fallback.body" = "لديك تحديث دفع جديد.";
+
+/* ---- Inline-English-literal keys ----
+   The pre-D7.1 scaffold uses `Text("…")` extensively, where the English literal
+   IS the localisation key. Translating them here flips the whole app to AR
+   without touching those call sites. */
+"Pay-links" = "روابط الدفع";
+"Dashboard" = "لوحة المعلومات";
+"More" = "المزيد";
+"Create pay-link" = "إنشاء رابط دفع";
+"Sign in" = "تسجيل الدخول";
+"Profile" = "الملف التعريفي";
+"Merchant" = "التاجر";
+"Shop" = "المتجر";
+"Role" = "الدور";
+"Effective role" = "الدور الفعلي";
+"Email" = "البريد الإلكتروني";
+"Mobile" = "الهاتف";
+"Two-factor" = "التحقق الثنائي";
+"On" = "مُفعَّل";
+"Off" = "مُعطَّل";
+"Plan" = "الخطة";
+"Aggregator (sub-merchants)" = "المُجمِّع (التجار الفرعيون)";
+"Smart routing" = "التوجيه الذكي";
+"Active pay-link quota" = "حصّة روابط الدفع النشطة";
+"Enabled" = "مُفعَّل";
+"Notifications" = "الإشعارات";
+"Push notifications" = "إشعارات الدفع";
+"Get reminders when a pay-link is about to expire, and updates when one is paid." = "تلقَّ تذكيرات عند اقتراب انتهاء رابط دفع، وتنبيهات عند دفع أحدها.";
+"Notifications are turned off for PayHub Merchant in iOS Settings. Enable them there to receive pay-link reminders." = "الإشعارات معطّلة لـ PayHub Merchant في إعدادات iOS. فعِّلها هناك لاستلام تذكيرات روابط الدفع.";
+"Account" = "الحساب";
+"Request password reset" = "طلب إعادة تعيين كلمة المرور";
+"Sign out" = "تسجيل الخروج";
+"Sign out?" = "تسجيل الخروج؟";
+"You'll need your merchant code, username, and password to sign back in." = "ستحتاج رمز التاجر واسم المستخدم وكلمة المرور لإعادة تسجيل الدخول.";
+"Signing out…" = "جارٍ تسجيل الخروج…";
+"OK" = "حسناً";
+"Cancel" = "إلغاء";
+"Version" = "الإصدار";
+"Server" = "الخادم";
+"PayHub is on-prem — the server URL was set when you signed in." = "PayHub منصّة على المخدّم — عُيِّن عنوان الخادم عند تسجيل دخولك.";
+"To change your name, email, or two-factor settings, use the PayHub web portal." = "لتغيير اسمك أو بريدك أو إعدادات التحقق الثنائي، استخدم بوّابة PayHub على الويب.";
+"Loading pay-links…" = "جارٍ تحميل روابط الدفع…";
+"No pay-links yet" = "لا توجد روابط دفع بعد";
+"Nothing here" = "لا شيء هنا";
+"Create a pay-link and share it — the customer picks how to pay." = "أنشئ رابط دفع وشاركه — العميل يختار طريقة الدفع.";
+"Filter" = "تصفية";

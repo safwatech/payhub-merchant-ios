@@ -1,0 +1,221 @@
+/* PayHub Merchant — English strings.
+
+   Two key styles coexist:
+
+     1. Structured keys (`payment.detail.title`) used by `NSLocalizedString` and
+        explicit `LocalizedStringKey("…")` lookups in newer files. Entries here
+        are not strictly required — the call sites pass an English `value:`
+        fallback — but populating them keeps EN + AR in lock-step and gives
+        translation tools one place to look.
+
+     2. English-literal keys (`"Pay-links" = "Pay-links";`) used wherever a view
+        has an inline `Text("Pay-links")`. SwiftUI interprets a string literal
+        as a `LocalizedStringKey`, so the key IS the English text — the AR file
+        translates them. The pre-D7.1 scaffold leans on this style for most
+        chrome strings; keep it working unchanged.
+*/
+
+/* ---- App ---- */
+"app.name" = "PayHub Merchant";
+
+/* ---- Tabs ---- */
+"tab.dashboard" = "Dashboard";
+"tab.payLinks" = "Pay-links";
+"tab.payments" = "Payments";
+"tab.more" = "More";
+
+/* ---- Common ---- */
+"common.cancel" = "Cancel";
+"common.done" = "Done";
+"common.ok" = "OK";
+"common.tryAgain" = "Try again";
+"common.retry" = "Retry";
+"common.loading" = "Loading…";
+"common.copied" = "Copied";
+"common.copy" = "Copy";
+"common.back" = "Back";
+"common.dash" = "—";
+
+/* ---- Auth ---- */
+"auth.signIn" = "Sign in";
+"auth.merchantCode" = "Merchant code";
+"auth.username" = "Username";
+"auth.password" = "Password";
+"auth.shopCode" = "Shop code (optional)";
+"auth.serverURL" = "Server URL";
+"auth.forgotPassword" = "Forgot password?";
+"auth.advanced" = "Advanced";
+"auth.mfa.title" = "Two-factor authentication";
+"auth.mfa.prompt" = "Enter the 6-digit code from your authenticator app.";
+"auth.mfa.verify" = "Verify";
+"auth.forgot.title" = "Reset password";
+"auth.forgot.send" = "Send reset link";
+"auth.forgot.sent" = "If that account exists, we've sent a password-reset link to its email address. Check your inbox.";
+"auth.invite.title" = "Accept invitation";
+"auth.invite.setPassword" = "Set password";
+
+/* ---- Dashboard ---- */
+"dashboard.title" = "Dashboard";
+"dashboard.paid" = "Paid";
+"dashboard.inflight" = "In flight";
+"dashboard.activePayLinks" = "Active pay-links";
+"dashboard.needsFollowup" = "Needs follow-up";
+"dashboard.byShop" = "By shop";
+"dashboard.otherOutcomes" = "Other outcomes";
+
+/* ---- Pay-links ---- */
+"payLinks.title" = "Pay-links";
+"payLinks.create" = "Create pay-link";
+"payLinks.empty.title" = "No pay-links yet";
+"payLinks.empty.body" = "Create a pay-link and share it — the customer picks how to pay.";
+"payLink.detail.title" = "Pay-link";
+"payLink.action.reshare" = "Re-share link";
+"payLink.action.extend" = "Extend expiry";
+"payLink.action.clone" = "Clone";
+"payLink.action.cancel" = "Cancel pay-link";
+"payLink.copy" = "Copy link";
+"payLink.share" = "Share link";
+
+/* pay-link statuses — used by PayLinkStatus.label */
+"payLink.status.active" = "Active";
+"payLink.status.paid" = "Paid";
+"payLink.status.expired" = "Expired";
+"payLink.status.cancelled" = "Cancelled";
+"payLink.status.refunded" = "Refunded";
+"payLink.status.unknown" = "Unknown";
+
+/* pay-link filter chip labels */
+"payLink.filter.all" = "All";
+"payLink.filter.needsFollowup" = "Needs follow-up";
+"payLink.filter.active" = "Active";
+"payLink.filter.paid" = "Paid";
+"payLink.filter.expired" = "Expired";
+"payLink.filter.cancelled" = "Cancelled";
+
+/* RelativeTime.expiry — note the `%@` is the locale-aware "in 2 days" / "2 days ago" string */
+"relativeTime.expires" = "Expires %@";
+"relativeTime.expired" = "Expired %@";
+
+/* ---- Payments (new) ---- */
+"payments.title" = "Payments";
+"payments.loading" = "Loading payments…";
+"payments.empty.title" = "No payments here";
+"payments.empty.all" = "Payments your customers make will show up here.";
+"payments.empty.filtered" = "Nothing matches this filter right now.";
+
+"payment.status.pending" = "Pending";
+"payment.status.requiresAction" = "Awaiting";
+"payment.status.succeeded" = "Paid";
+"payment.status.failed" = "Failed";
+"payment.status.cancelled" = "Cancelled";
+"payment.status.refunded" = "Refunded";
+"payment.status.unknown" = "Unknown";
+
+"payment.filter.all" = "All";
+"payment.filter.pending" = "Pending";
+"payment.filter.requiresAction" = "Awaiting";
+"payment.filter.succeeded" = "Paid";
+"payment.filter.failed" = "Failed";
+"payment.filter.cancelled" = "Cancelled";
+"payment.filter.refunded" = "Refunded";
+
+"payment.detail.title" = "Payment";
+"payment.detail.orderRef" = "Order reference";
+"payment.detail.psp" = "Payment provider";
+"payment.detail.pspRef" = "Provider reference";
+"payment.detail.customerMobile" = "Customer mobile";
+"payment.detail.created" = "Created";
+"payment.detail.lastUpdate" = "Last update";
+"payment.detail.viewPayLink" = "View pay-link";
+"payment.detail.events" = "Events";
+"payment.detail.noEvents" = "No events recorded yet.";
+"payment.detail.metadata" = "Metadata";
+
+/* ---- Settlements (new) ---- */
+"settlements.title" = "Settlements";
+"settlements.loading" = "Loading…";
+"settlements.empty.title" = "No settlement files yet";
+"settlements.empty.body" = "When your PSP delivers a settlement file, it shows up here.";
+"settlements.uploadedAgo" = "Uploaded %@";
+"settlements.matchedOfTotal" = "%1$d/%2$d matched";
+"settlements.mismatchCount" = "%d mismatch";
+"settlements.detail.title" = "Settlement file";
+"settlements.detail.rows" = "Rows";
+"settlements.detail.noRows" = "No rows match this filter.";
+"settlements.detail.period" = "Period: %1$@ → %2$@";
+"settlements.counter.total" = "Total";
+"settlements.counter.matched" = "Matched";
+"settlements.counter.mismatch" = "Mismatch";
+"settlements.counter.missingInHub" = "Missing — hub";
+"settlements.counter.missingInPsp" = "Missing — PSP";
+"settlements.row.pspStatus" = "PSP: %@";
+"settlements.row.filter.all" = "All";
+"settlements.row.filter.matched" = "Matched";
+"settlements.row.filter.mismatch" = "Mismatch";
+"settlements.row.filter.missingInHub" = "Missing in hub";
+"settlements.row.filter.missingInPsp" = "Missing in PSP";
+"settlements.diffRow" = "%1$@ — hub: %2$@ · psp: %3$@";
+"settlements.diffMore" = "+%d more";
+
+/* ---- More ---- */
+"more.title" = "More";
+"more.profile" = "Profile";
+"more.plan" = "Plan";
+"more.notifications" = "Notifications";
+"more.pushToggle" = "Push notifications";
+"more.requestReset" = "Request password reset";
+"more.signOut" = "Sign out";
+"more.version" = "Version";
+"more.server" = "Server";
+"more.reports" = "Reports";
+"more.settlements" = "Settlements";
+"more.settlements.hint" = "Reconciliation files matched against your payments";
+
+/* ---- Push fallbacks (used when the FCM/APNs payload omits a title/body) ---- */
+"push.fallback.title" = "PayHub";
+"push.fallback.body" = "You have a new payment update.";
+
+/* ---- Inline-literal keys translated by ar.lproj ----
+   These appear here as `key == value` for completeness — runtime would resolve
+   them to the same string with or without an entry. */
+"Pay-links" = "Pay-links";
+"Dashboard" = "Dashboard";
+"More" = "More";
+"Create pay-link" = "Create pay-link";
+"Sign in" = "Sign in";
+"Profile" = "Profile";
+"Merchant" = "Merchant";
+"Shop" = "Shop";
+"Role" = "Role";
+"Effective role" = "Effective role";
+"Email" = "Email";
+"Mobile" = "Mobile";
+"Two-factor" = "Two-factor";
+"On" = "On";
+"Off" = "Off";
+"Plan" = "Plan";
+"Aggregator (sub-merchants)" = "Aggregator (sub-merchants)";
+"Smart routing" = "Smart routing";
+"Active pay-link quota" = "Active pay-link quota";
+"Enabled" = "Enabled";
+"Notifications" = "Notifications";
+"Push notifications" = "Push notifications";
+"Get reminders when a pay-link is about to expire, and updates when one is paid." = "Get reminders when a pay-link is about to expire, and updates when one is paid.";
+"Notifications are turned off for PayHub Merchant in iOS Settings. Enable them there to receive pay-link reminders." = "Notifications are turned off for PayHub Merchant in iOS Settings. Enable them there to receive pay-link reminders.";
+"Account" = "Account";
+"Request password reset" = "Request password reset";
+"Sign out" = "Sign out";
+"Sign out?" = "Sign out?";
+"You'll need your merchant code, username, and password to sign back in." = "You'll need your merchant code, username, and password to sign back in.";
+"Signing out…" = "Signing out…";
+"OK" = "OK";
+"Cancel" = "Cancel";
+"Version" = "Version";
+"Server" = "Server";
+"PayHub is on-prem — the server URL was set when you signed in." = "PayHub is on-prem — the server URL was set when you signed in.";
+"To change your name, email, or two-factor settings, use the PayHub web portal." = "To change your name, email, or two-factor settings, use the PayHub web portal.";
+"Loading pay-links…" = "Loading pay-links…";
+"No pay-links yet" = "No pay-links yet";
+"Nothing here" = "Nothing here";
+"Create a pay-link and share it — the customer picks how to pay." = "Create a pay-link and share it — the customer picks how to pay.";
+"Filter" = "Filter";

@@ -227,6 +227,37 @@ final class MerchantRepository: ObservableObject {
         do { return try await client.payLinks.markShared(id) } catch { throw mapped(error) }
     }
 
+    // MARK: - Payments (raw — pending SDK 1.2)
+
+    func payments(psp: String? = nil, status: String? = nil,
+                  limit: Int = 50, offset: Int = 0) async throws -> [PaymentRow] {
+        do { return try await makeRawAPI().listPayments(psp: psp, status: status, limit: limit, offset: offset) }
+        catch { throw mapped(error) }
+    }
+
+    func payment(_ id: String) async throws -> PaymentDetail {
+        do { return try await makeRawAPI().getPayment(id: id) } catch { throw mapped(error) }
+    }
+
+    // MARK: - Settlements (raw — pending SDK 1.2)
+
+    func settlements(psp: String? = nil, limit: Int = 50, offset: Int = 0) async throws -> [SettlementFile] {
+        do { return try await makeRawAPI().listSettlements(psp: psp, limit: limit, offset: offset) }
+        catch { throw mapped(error) }
+    }
+
+    func settlement(_ id: String) async throws -> SettlementFile {
+        do { return try await makeRawAPI().getSettlement(id: id) } catch { throw mapped(error) }
+    }
+
+    func settlementRows(fileID: String, statusFilter: String? = nil,
+                        limit: Int = 100, offset: Int = 0) async throws -> [SettlementRow] {
+        do {
+            return try await makeRawAPI().listSettlementRows(
+                fileID: fileID, statusFilter: statusFilter, limit: limit, offset: offset)
+        } catch { throw mapped(error) }
+    }
+
     // MARK: - Push
 
     func registerDevice(apnsTokenHex: String) async throws {

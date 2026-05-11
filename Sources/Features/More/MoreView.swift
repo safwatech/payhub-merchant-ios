@@ -17,14 +17,26 @@ struct MoreView: View {
                 profileSection
                 if let me = repository.me, let ent = me.entitlements { entitlementsSection(ent) }
                 notificationsSection
+                reportsSection
                 accountSection
                 footerSection
             }
-            .navigationTitle("More")
+            .navigationTitle(LocalizedStringKey("more.title"))
             .refreshable { await vm.refresh() }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { vm.reloadMe() } label: { Image(systemName: "arrow.clockwise") }
+                }
+            }
+            .navigationDestination(for: SettlementsRoute.self) { route in
+                switch route {
+                case let .file(id): SettlementDetailView(fileID: id)
+                case let .payment(id): PaymentDetailView(paymentID: id)
+                }
+            }
+            .navigationDestination(for: MoreRoute.self) { route in
+                switch route {
+                case .settlements: SettlementsView()
                 }
             }
             .sheet(isPresented: $showForgot) {
@@ -105,6 +117,25 @@ struct MoreView: View {
                 Text(ent.smartRouting ? "Enabled" : "Off").foregroundStyle(ent.smartRouting ? .green : .secondary)
             }
             LabeledContent("Active pay-link quota", value: ent.payLinkQuota > 0 ? "\(ent.payLinkQuota)" : "—")
+        }
+    }
+
+    private var reportsSection: some View {
+        Section {
+            NavigationLink(value: MoreRoute.settlements) {
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(LocalizedStringKey("more.settlements"))
+                        Text(LocalizedStringKey("more.settlements.hint"))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "doc.text.magnifyingglass")
+                }
+            }
+        } header: {
+            Text(LocalizedStringKey("more.reports"))
         }
     }
 
