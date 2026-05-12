@@ -3,6 +3,66 @@
 All notable changes to **PayHub Merchant** (iOS) are documented here. This
 project follows [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] — 2026-05-12
+
+The rest of the merchant surface a shopkeeper or parent owner needs from a phone
+— in-app account / 2FA / organisation / sub-merchant management — plus three
+pieces of "ship-ready" hardening. Mirrors the Android 0.3.0 slice.
+
+### Added
+- **Change password** — More → Security → Change password. Old / new (≥12-char
+  client check) / confirm; a TOTP-code field appears when 2FA is on (or on
+  `hub.merchant.mfa_required`). `hub.merchant.mfa_required` / `bad_mfa` /
+  `bad_credentials` are surfaced inline — **not** as session loss.
+- **Two-factor management** — More → Security → Two-factor. Enable → setup key +
+  a `CIFilter.qrCodeGenerator` QR → 6-digit confirm; Disable → password.
+- **Organisation profile** — More → Business → Organisation profile (parent
+  users). Read-only `code` / `status` / `created_at`; the contact / legal /
+  address fields editable for a parent **OWNER** (client validation mirrors the
+  server; PATCH sends only dirty keys; empty string clears).
+- **Sub-merchant & sub-user management** — More → Business → Sub-merchants
+  (parent **OWNER** with the aggregator entitlement). Create / edit / list
+  sub-merchants (delete refused while payments reference the sub); per sub:
+  invite a sub-user (copyable invite link + send channel), edit role / status,
+  disable, reissue invite, clear MFA (acting owner's own TOTP).
+- **Biometric / device-credential app lock** — More → Security → App lock.
+  When on, the app re-prompts via `LAContext` (`.deviceOwnerAuthentication` —
+  Face ID / Touch ID with passcode fallback) on cold start and after >2 min
+  backgrounded. `NSFaceIDUsageDescription` added. Off by default.
+- **Crash / error reporting** → GlitchTip (Sentry protocol) via `getsentry/sentry-cocoa`.
+  Off unless a DSN is built in (`PAYHUB_SENTRY_DSN` build setting → Info.plist);
+  no PII, crashes/errors only, release-tagged `payhub-merchant-ios@<version>`.
+
+### Changed
+- **Raw API calls now ride a transparent 401 → refresh → retry.** `MerchantRawAPI.send`
+  takes a `tokenRefresh` closure and retries once on a 401; `MerchantRepository.makeRawAPI`
+  wires it to a coalesced `refreshAccessToken()` (an in-flight `Task`, so concurrent
+  callers don't burn the single-use refresh token twice). A 401 that survives the
+  retry still drops the session.
+- **`MerchantRawAPI`** gains the `/merchant/auth/{change-password,mfa/*}`,
+  `/merchant/org`, and `/merchant/sub-merchants[/…/users]` endpoints + `Codable`
+  models; `mapEnvelope` special-cases the auth-endpoint 401 codes and falls back
+  to FastAPI's `{"detail": …}`. `AppError` gains friendly messages for the
+  merchant error codes; `MerchantMe+Roles` adds `isParentOwner` / `canManageSubs`.
+- **`MoreView`** grows "Security" + (parent-only) "Business" sections; `DeepLink`
+  adds the new `MoreRoute` cases + a `SubMerchantsRoute`. `LockManager` is fed
+  `@Environment(\.scenePhase)` and overlays `LockView` from `RootView`.
+- New SPM dep: `getsentry/sentry-cocoa` (`from: 8.0.0`).
+
+### Tests
+- `MerchantRawAPI{Auth,Org,SubMerchants}Tests`, `MerchantMeRolesTests` — the new
+  endpoints and the visibility matrix.
+- `MerchantRawAPIRefreshTests` — the 401-refresh-retry path; `LockManagerTests` —
+  the cold-start / background-timeout / enable-confirm logic.
+
+### Known limitations
+- The account / org / sub-merchant endpoints stay raw-HTTP — fold into SDK 1.2.
+- `SUB_OWNER` cashier self-management and in-app sub-merchant API-key management
+  are still `// TODO(payhub)`.
+- Crash reporting has no user-facing opt-out yet (the build-time DSN gates it).
+- Still not compiled in the authoring environment — relies on Xcode / the
+  standalone repo's CI.
+
 ## [0.2.0] — 2026-05-11
 
 Phone-first surface for the most-asked-for mobile queries (payments + settlements),
