@@ -50,6 +50,10 @@ packages:
     path: ../../sdks/swift
     # url: https://github.com/safwatech/payhub-swift   # ← switch to this once payhub-swift 1.1.0 is published
     # from: 1.1.0
+  # Crash / error reporting → GlitchTip (Sentry protocol). No-op until PAYHUB_SENTRY_DSN is set.
+  Sentry:
+    url: https://github.com/getsentry/sentry-cocoa
+    from: 8.0.0
 
 targets:
   PayHubMerchant:
@@ -67,6 +71,8 @@ targets:
     dependencies:
       - package: Payhub
         product: Payhub
+      - package: Sentry
+        product: Sentry
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ly.payhub.merchant
@@ -76,6 +82,9 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         TARGETED_DEVICE_FAMILY: "1" # iPhone only (1=iPhone, 2=iPad)
+        # Crash-reporting DSN (GlitchTip / Sentry). Empty by default ⇒ the SDK is a
+        # no-op; the vendor overrides this build setting (xcconfig / CI) to enable it.
+        PAYHUB_SENTRY_DSN: ""
         # SWIFT_STRICT_CONCURRENCY: targeted   # enable once the build is green and warnings are triaged
       configs:
         Debug:
@@ -96,6 +105,10 @@ targets:
           - UIInterfaceOrientationPortrait
         UIApplicationSupportsIndirectInputEvents: true
         ITSAppUsesNonExemptEncryption: false
+        # Biometric app lock (opt-in, in More → Security).
+        NSFaceIDUsageDescription: "Unlock PayHub Merchant with Face ID."
+        # Build-time crash-reporting DSN, surfaced to AppInfo.sentryDSN (empty ⇒ disabled).
+        PAYHUB_SENTRY_DSN: "$(PAYHUB_SENTRY_DSN)"
         # Silent-push background mode for pay-link reminders (optional, harmless).
         UIBackgroundModes:
           - remote-notification

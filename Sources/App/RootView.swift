@@ -5,6 +5,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject private var repository: MerchantRepository
     @EnvironmentObject private var router: AppRouter
+    @EnvironmentObject private var lock: LockManager
 
     var body: some View {
         Group {
@@ -14,10 +15,15 @@ struct RootView: View {
             case .unauthenticated:
                 LoginView()
             case .authenticated:
-                MainTabView()
+                if lock.isLocked {
+                    LockView()
+                } else {
+                    MainTabView()
+                }
             }
         }
         .animation(.easeInOut(duration: 0.25), value: repository.authState)
+        .animation(.easeInOut(duration: 0.2), value: lock.isLocked)
         .sheet(item: invitePresentation) { presentation in
             AcceptInviteView(link: presentation.link)
         }

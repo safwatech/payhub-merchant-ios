@@ -6,6 +6,7 @@ import Payhub
 struct MoreView: View {
     @EnvironmentObject private var repository: MerchantRepository
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var lock: LockManager
     @StateObject private var vm = MoreViewModel()
 
     @State private var showForgot = false
@@ -133,8 +134,32 @@ struct MoreView: View {
                     }
                 } icon: { Image(systemName: "lock.shield") }
             }
+            appLockRow
         } header: {
             Text(LocalizedStringKey("more.security"))
+        }
+    }
+
+    @ViewBuilder private var appLockRow: some View {
+        let hint = lock.canEnable ? "more.appLock.hint" : "more.appLock.unavailable"
+        let label = Label {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(LocalizedStringKey("more.appLock"))
+                Text(LocalizedStringKey(hint)).font(.caption).foregroundStyle(.secondary)
+            }
+        } icon: { Image(systemName: "faceid") }
+
+        if lock.canEnable {
+            Toggle(isOn: Binding(
+                get: { lock.isEnabled },
+                set: { on in
+                    Task {
+                        await lock.setEnabled(on, confirmReason: NSLocalizedString(
+                            "lock.confirmReason", value: "Confirm it's you to turn on the app lock", comment: ""))
+                    }
+                })) { label }
+        } else {
+            label.foregroundStyle(.secondary)
         }
     }
 

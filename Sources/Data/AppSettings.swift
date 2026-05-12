@@ -12,6 +12,7 @@ final class AppSettings: ObservableObject {
     private enum Key {
         static let serverURL = "payhub.serverURL"
         static let pushEnabled = "payhub.pushEnabled"
+        static let appLockEnabled = "payhub.appLockEnabled"
         static let lastMerchantCode = "payhub.lastMerchantCode"
         static let lastUsername = "payhub.lastUsername"
         static let lastSubCode = "payhub.lastSubCode"
@@ -24,6 +25,7 @@ final class AppSettings: ObservableObject {
         self.serverURLString = defaults.string(forKey: Key.serverURL)
             ?? PayhubClient.defaultBaseURL.absoluteString
         self.pushEnabled = defaults.bool(forKey: Key.pushEnabled)
+        self.appLockEnabled = defaults.bool(forKey: Key.appLockEnabled)
     }
 
     @Published var serverURLString: String {
@@ -32,6 +34,11 @@ final class AppSettings: ObservableObject {
 
     @Published var pushEnabled: Bool {
         didSet { defaults.set(pushEnabled, forKey: Key.pushEnabled) }
+    }
+
+    /// Opt-in: gate the authenticated UI behind Face ID / Touch ID / device passcode.
+    @Published var appLockEnabled: Bool {
+        didSet { defaults.set(appLockEnabled, forKey: Key.appLockEnabled) }
     }
 
     /// Parsed server URL, falling back to the default if the stored string is junk.

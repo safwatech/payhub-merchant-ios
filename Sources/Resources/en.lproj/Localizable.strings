@@ -282,6 +282,16 @@
 "more.twoFactorOff" = "Off";
 "more.orgProfile" = "Organisation profile";
 "more.subMerchants" = "Sub-merchants";
+"more.appLock" = "App lock";
+"more.appLock.hint" = "Require Face ID, Touch ID, or your device passcode to open the app";
+"more.appLock.unavailable" = "Set up Face ID, Touch ID, or a passcode on this device first";
+
+/* ---- Biometric app lock screen ---- */
+"lock.title" = "PayHub Merchant is locked";
+"lock.subtitle" = "Unlock with Face ID, Touch ID, or your device passcode to continue.";
+"lock.unlock" = "Unlock";
+"lock.reason" = "Unlock PayHub Merchant to continue";
+"lock.confirmReason" = "Confirm it's you to turn on the app lock";
 
 /* ---- Push fallbacks (used when the FCM/APNs payload omits a title/body) ---- */
 "push.fallback.title" = "PayHub";

@@ -15,4 +15,11 @@ enum AppInfo {
     static var versionDisplay: String {
         "\(version) (\(build))"
     }
+
+    /// Build-time crash-reporting DSN (GlitchTip / Sentry), injected via the
+    /// `PAYHUB_SENTRY_DSN` build setting → Info.plist. Empty ⇒ reporting disabled.
+    static var sentryDSN: String {
+        (Bundle.main.object(forInfoDictionaryKey: "PAYHUB_SENTRY_DSN") as? String)?
+            .trimmingCharacters(in: .whitespaces) ?? ""
+    }
 }

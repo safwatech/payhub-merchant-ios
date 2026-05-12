@@ -6,9 +6,12 @@ import SwiftUI
 struct PayHubMerchantApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
+    @Environment(\.scenePhase) private var scenePhase
+
     @StateObject private var settings = AppSettings.shared
     @StateObject private var repository = MerchantRepository()
     @StateObject private var router = AppRouter()
+    @StateObject private var lock = LockManager()
 
     var body: some Scene {
         WindowGroup {
@@ -16,6 +19,7 @@ struct PayHubMerchantApp: App {
                 .environmentObject(settings)
                 .environmentObject(repository)
                 .environmentObject(router)
+                .environmentObject(lock)
                 .tint(Brand.amber)
                 .task {
                     // Wire the delegate ↔ router/push, then validate the persisted session.
@@ -25,6 +29,7 @@ struct PayHubMerchantApp: App {
                     await repository.bootstrap()
                 }
                 .onOpenURL { url in router.handleURL(url) }
+                .onChange(of: scenePhase) { phase in lock.handleScenePhase(phase) }
         }
     }
 }

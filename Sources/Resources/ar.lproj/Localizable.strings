@@ -270,6 +270,16 @@
 "more.twoFactorOff" = "مُعطَّل";
 "more.orgProfile" = "الملف التعريفي للمؤسسة";
 "more.subMerchants" = "التجار الفرعيون";
+"more.appLock" = "قفل التطبيق";
+"more.appLock.hint" = "اطلب بصمة الوجه أو بصمة الإصبع أو رمز قفل جهازك لفتح التطبيق";
+"more.appLock.unavailable" = "أعدّ بصمة الوجه أو بصمة الإصبع أو رمز قفل على هذا الجهاز أولاً";
+
+/* ---- شاشة قفل التطبيق بالمصادقة الحيوية ---- */
+"lock.title" = "تطبيق PayHub Merchant مُقفَل";
+"lock.subtitle" = "افتح القفل ببصمة الوجه أو بصمة الإصبع أو رمز قفل جهازك للمتابعة.";
+"lock.unlock" = "فتح القفل";
+"lock.reason" = "افتح قفل PayHub Merchant للمتابعة";
+"lock.confirmReason" = "أكّد هويتك لتفعيل قفل التطبيق";
 
 /* ---- Push fallbacks ---- */
 "push.fallback.title" = "PayHub";
