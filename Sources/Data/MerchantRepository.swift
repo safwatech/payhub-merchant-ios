@@ -258,6 +258,79 @@ final class MerchantRepository: ObservableObject {
         } catch { throw mapped(error) }
     }
 
+    // MARK: - Account / org / sub-merchants (raw — pending SDK 1.2)
+
+    func changePassword(oldPassword: String, newPassword: String, code: String?) async throws {
+        do { try await makeRawAPI().changePassword(oldPassword: oldPassword, newPassword: newPassword, code: code) }
+        catch { throw mapped(error) }
+    }
+
+    func mfaEnrol() async throws -> MfaEnrol {
+        do { return try await makeRawAPI().mfaEnrol() } catch { throw mapped(error) }
+    }
+
+    func mfaConfirm(code: String) async throws {
+        do { try await makeRawAPI().mfaConfirm(code: code) } catch { throw mapped(error) }
+        try? await refreshMe()   // flip `mfaEnabled` so the More-screen badge updates
+    }
+
+    func mfaDisable(password: String) async throws {
+        do { try await makeRawAPI().mfaDisable(password: password) } catch { throw mapped(error) }
+        try? await refreshMe()
+    }
+
+    func getOrg() async throws -> OrgInfo {
+        do { return try await makeRawAPI().getOrg() } catch { throw mapped(error) }
+    }
+
+    func updateOrg(_ patch: OrgPatch) async throws -> OrgInfo {
+        do { return try await makeRawAPI().updateOrg(patch) } catch { throw mapped(error) }
+    }
+
+    func listSubMerchants() async throws -> [SubMerchant] {
+        do { return try await makeRawAPI().listSubMerchants() } catch { throw mapped(error) }
+    }
+
+    func getSubMerchant(id: String) async throws -> SubMerchant {
+        do { return try await makeRawAPI().getSubMerchant(id: id) } catch { throw mapped(error) }
+    }
+
+    func createSubMerchant(_ body: SubMerchantCreate) async throws -> SubMerchant {
+        do { return try await makeRawAPI().createSubMerchant(body) } catch { throw mapped(error) }
+    }
+
+    func updateSubMerchant(id: String, _ body: SubMerchantPatch) async throws -> SubMerchant {
+        do { return try await makeRawAPI().updateSubMerchant(id: id, body) } catch { throw mapped(error) }
+    }
+
+    func deleteSubMerchant(id: String) async throws {
+        do { try await makeRawAPI().deleteSubMerchant(id: id) } catch { throw mapped(error) }
+    }
+
+    func listSubUsers(subID: String) async throws -> [SubUser] {
+        do { return try await makeRawAPI().listSubUsers(subID: subID) } catch { throw mapped(error) }
+    }
+
+    func createSubUser(subID: String, _ body: SubUserCreate) async throws -> SubUserCreated {
+        do { return try await makeRawAPI().createSubUser(subID: subID, body) } catch { throw mapped(error) }
+    }
+
+    func updateSubUser(subID: String, uid: String, _ body: SubUserPatch) async throws -> SubUser {
+        do { return try await makeRawAPI().updateSubUser(subID: subID, uid: uid, body) } catch { throw mapped(error) }
+    }
+
+    func disableSubUser(subID: String, uid: String) async throws {
+        do { try await makeRawAPI().disableSubUser(subID: subID, uid: uid) } catch { throw mapped(error) }
+    }
+
+    func reissueSubUserInvite(subID: String, uid: String) async throws -> ReissueInvite {
+        do { return try await makeRawAPI().reissueSubUserInvite(subID: subID, uid: uid) } catch { throw mapped(error) }
+    }
+
+    func clearSubUserMfa(subID: String, uid: String, code: String) async throws {
+        do { try await makeRawAPI().clearSubUserMfa(subID: subID, uid: uid, code: code) } catch { throw mapped(error) }
+    }
+
     // MARK: - Push
 
     func registerDevice(apnsTokenHex: String) async throws {

@@ -72,4 +72,16 @@ enum MainTab: Hashable {
 /// Routes that can be pushed onto the More tab's navigation stack.
 enum MoreRoute: Hashable {
     case settlements
+    case changePassword
+    case mfaSettings
+    case orgProfile
+    case subMerchants
+}
+
+/// Routes pushed onto the sub-merchant management stack (lives under the More
+/// tab's `NavigationStack`). Wrapped in its own enum so the type-segregated
+/// `navigationDestination` for sub-merchants doesn't collide with `MoreRoute`.
+enum SubMerchantsRoute: Hashable {
+    case detail(id: String)
+    case users(subID: String)
 }

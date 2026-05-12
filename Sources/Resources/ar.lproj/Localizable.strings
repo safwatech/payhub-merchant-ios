@@ -145,6 +145,110 @@
 "settlements.diffRow" = "%1$@ — النظام: %2$@ · البوابة: %3$@";
 "settlements.diffMore" = "+%d آخر";
 
+/* ---- Account — تغيير كلمة المرور ---- */
+"account.changepw.title" = "تغيير كلمة المرور";
+"account.changepw.current" = "كلمة المرور الحالية";
+"account.changepw.new" = "كلمة المرور الجديدة";
+"account.changepw.confirm" = "تأكيد كلمة المرور الجديدة";
+"account.changepw.code" = "رمز المصادقة";
+"account.changepw.mismatch" = "كلمتا المرور غير متطابقتين";
+"account.changepw.tooShort" = "12 حرفاً على الأقل";
+"account.changepw.success" = "تم تغيير كلمة المرور";
+"account.changepw.submit" = "تغيير كلمة المرور";
+
+/* ---- Account — المصادقة الثنائية ---- */
+"account.mfa.title" = "المصادقة الثنائية";
+"account.mfa.statusOn" = "المصادقة الثنائية مُفعَّلة";
+"account.mfa.statusOff" = "المصادقة الثنائية مُعطَّلة";
+"account.mfa.enable" = "تفعيل المصادقة الثنائية";
+"account.mfa.intro" = "امسح رمز QR بتطبيق مصادقة، ثم أدخل الرمز المكوّن من 6 أرقام للتأكيد.";
+"account.mfa.secretLabel" = "مفتاح الإعداد";
+"account.mfa.code" = "الرمز المكوّن من 6 أرقام";
+"account.mfa.confirm" = "تأكيد";
+"account.mfa.enabledToast" = "تم تفعيل المصادقة الثنائية";
+"account.mfa.disable" = "تعطيل المصادقة الثنائية";
+"account.mfa.disablePassword" = "كلمة مرور الحساب";
+"account.mfa.disabledToast" = "تم تعطيل المصادقة الثنائية";
+
+/* ---- الملف التعريفي للمؤسسة ---- */
+"org.profile.title" = "الملف التعريفي للمؤسسة";
+"org.profile.sectionIdentity" = "الهوية";
+"org.profile.sectionContact" = "بيانات الاتصال";
+"org.profile.sectionAddress" = "العنوان";
+"org.profile.code" = "الرمز";
+"org.profile.status" = "الحالة";
+"org.profile.name" = "الاسم الظاهر";
+"org.profile.type" = "النوع";
+"org.profile.typePerson" = "فرد";
+"org.profile.typeCompany" = "شركة";
+"org.profile.legalName" = "الاسم القانوني";
+"org.profile.taxNumber" = "الرقم الضريبي";
+"org.profile.commercialRegisterNo" = "رقم السجل التجاري";
+"org.profile.billingEmail" = "بريد الفوترة";
+"org.profile.supportEmail" = "بريد الدعم";
+"org.profile.phone" = "الهاتف";
+"org.profile.website" = "الموقع الإلكتروني";
+"org.profile.addressLine1" = "العنوان — السطر 1";
+"org.profile.addressLine2" = "العنوان — السطر 2";
+"org.profile.city" = "المدينة";
+"org.profile.country" = "الدولة (رمز من حرفين)";
+"org.profile.logoURL" = "رابط الشعار";
+"org.profile.readOnly" = "يمكنك العرض دون التعديل — اطلب من مالك إجراء التغييرات.";
+"org.profile.save" = "حفظ التغييرات";
+"org.profile.savedToast" = "تم الحفظ";
+"org.profile.errHTTPS" = "يجب أن يبدأ بـ https://";
+"org.profile.errCountry" = "حرفان كبيران، مثل LY";
+"org.profile.errEmail" = "أدخل بريداً إلكترونياً صحيحاً";
+
+/* ---- التجار الفرعيون ---- */
+"subs.title" = "التجار الفرعيون";
+"subs.empty" = "لا يوجد تجار فرعيون بعد";
+"subs.add" = "إضافة تاجر فرعي";
+"subs.code" = "الرمز";
+"subs.codePrefix" = "بادئة الرمز";
+"subs.name" = "الاسم";
+"subs.statusActive" = "نشط";
+"subs.paymentsCount" = "%d مدفوعات";
+"subs.createdToast" = "تم إنشاء التاجر الفرعي";
+"subs.codeHint" = "أحرف صغيرة وأرقام و- أو _";
+"subs.prefixHint" = "من حرفين إلى 6 أحرف/أرقام كبيرة";
+
+"sub.detail.title" = "تاجر فرعي";
+"sub.detail.edit" = "تعديل";
+"sub.detail.delete" = "حذف التاجر الفرعي";
+"sub.detail.deleteBlocked" = "لديه %d مدفوعات — عطّله بدلاً من ذلك";
+"sub.detail.users" = "إدارة المستخدمين";
+"sub.detail.updatedToast" = "تم التحديث";
+"sub.detail.deletedToast" = "تم الحذف";
+
+/* ---- مستخدمو المتجر الفرعي ---- */
+"subusers.title" = "المستخدمون";
+"subusers.empty" = "لا يوجد مستخدمون بعد";
+"subusers.invite" = "دعوة مستخدم";
+"subusers.username" = "اسم المستخدم";
+"subusers.fullName" = "الاسم الكامل";
+"subusers.email" = "البريد الإلكتروني";
+"subusers.mobile" = "الهاتف المحمول";
+"subusers.phone" = "الهاتف";
+"subusers.role" = "الدور";
+"role.subOwner" = "مالك المتجر";
+"role.subOperator" = "مشغّل المتجر";
+"role.subViewer" = "مستعرض المتجر";
+"subusers.inviteLinkTitle" = "رابط الدعوة";
+"subusers.inviteSent" = "أُرسل إلى %@";
+"subusers.inviteNotSent" = "تعذّر الإرسال تلقائياً — انسخ الرابط أدناه";
+"subusers.inviteCopy" = "نسخ الرابط";
+"subusers.edit" = "تعديل";
+"subusers.disable" = "تعطيل";
+"subusers.reissue" = "إعادة إصدار الدعوة";
+"subusers.clearMFA" = "مسح المصادقة الثنائية";
+"subusers.clearMFACode" = "رمز المصادقة الخاص بك";
+"subusers.invitedToast" = "تمت الدعوة";
+"subusers.updatedToast" = "تم التحديث";
+"subusers.disabledToast" = "تم التعطيل";
+"subusers.reissuedToast" = "أُعيد إصدار الدعوة";
+"subusers.mfaClearedToast" = "تم مسح المصادقة الثنائية";
+
 /* ---- More ---- */
 "more.title" = "المزيد";
 "more.profile" = "الملف التعريفي";
@@ -158,6 +262,14 @@
 "more.reports" = "التقارير";
 "more.settlements" = "التسويات";
 "more.settlements.hint" = "ملفات المطابقة مع مدفوعاتك";
+"more.security" = "الأمان";
+"more.business" = "الأعمال";
+"more.changePassword" = "تغيير كلمة المرور";
+"more.twoFactor" = "المصادقة الثنائية";
+"more.twoFactorOn" = "مُفعَّل";
+"more.twoFactorOff" = "مُعطَّل";
+"more.orgProfile" = "الملف التعريفي للمؤسسة";
+"more.subMerchants" = "التجار الفرعيون";
 
 /* ---- Push fallbacks ---- */
 "push.fallback.title" = "PayHub";
@@ -202,7 +314,7 @@
 "Version" = "الإصدار";
 "Server" = "الخادم";
 "PayHub is on-prem — the server URL was set when you signed in." = "PayHub منصّة على المخدّم — عُيِّن عنوان الخادم عند تسجيل دخولك.";
-"To change your name, email, or two-factor settings, use the PayHub web portal." = "لتغيير اسمك أو بريدك أو إعدادات التحقق الثنائي، استخدم بوّابة PayHub على الويب.";
+"Manage your two-factor and password here, or your full profile on the PayHub web portal." = "أدِر المصادقة الثنائية وكلمة المرور من هنا، أو ملفك التعريفي الكامل من بوّابة PayHub على الويب.";
 "Loading pay-links…" = "جارٍ تحميل روابط الدفع…";
 "No pay-links yet" = "لا توجد روابط دفع بعد";
 "Nothing here" = "لا شيء هنا";

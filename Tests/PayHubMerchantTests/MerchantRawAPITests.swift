@@ -341,9 +341,10 @@ final class StubURLProtocol: URLProtocol {
     override func stopLoading() {}
 }
 
-private extension URLRequest {
+extension URLRequest {
     /// `URLProtocol` swaps `httpBody` for `httpBodyStream` once the request is in
     /// flight — this convenience drains the stream so tests can inspect the body.
+    /// Shared across the `MerchantRawAPI*Tests` suites.
     var bodyData: Data? {
         if let body = httpBody { return body }
         guard let stream = httpBodyStream else { return nil }

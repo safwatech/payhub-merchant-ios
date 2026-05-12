@@ -47,4 +47,34 @@ final class AppErrorTests: XCTestCase {
         XCTAssertEqual(mapped.message, "M")
         XCTAssertTrue(mapped.isRetryable)
     }
+
+    func testMfaRequired401IsNotAuthFailure() {
+        let pe = PayhubError.api(kind: .authentication, code: "hub.merchant.mfa_required", httpStatus: 401,
+                                 message: "Authenticator code required.", details: [:], requestId: nil)
+        let app = AppError.from(pe)
+        XCTAssertFalse(app.isAuthFailure)
+        XCTAssertTrue(app.requiresMFACode)
+    }
+
+    func testBadCredentials401IsNotAuthFailure() {
+        let pe = PayhubError.api(kind: .authentication, code: "hub.merchant.bad_credentials", httpStatus: 401,
+                                 message: "wrong", details: [:], requestId: nil)
+        XCTAssertFalse(AppError.from(pe).isAuthFailure)
+    }
+
+    func testLastSubOwnerUsesServerMessage() {
+        let pe = PayhubError.api(kind: .idempotencyConflict, code: "hub.merchant.last_sub_owner", httpStatus: 409,
+                                 message: "That would leave the shop with no active owner.", details: [:], requestId: nil)
+        let app = AppError.from(pe)
+        XCTAssertTrue(app.message.contains("no active owner"))
+    }
+
+    func testLicenseLimitExceededSurfacesServerMessage() {
+        let pe = PayhubError.api(kind: .permission, code: "hub.license.limit_exceeded", httpStatus: 403,
+                                 message: "Sub-merchants aren't included in your plan — contact your vendor to upgrade.",
+                                 details: [:], requestId: nil)
+        let app = AppError.from(pe)
+        XCTAssertTrue(app.message.contains("contact your vendor"))
+        XCTAssertFalse(app.isAuthFailure)
+    }
 }

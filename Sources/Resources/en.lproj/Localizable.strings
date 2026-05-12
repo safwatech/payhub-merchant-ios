@@ -157,6 +157,110 @@
 "settlements.diffRow" = "%1$@ — hub: %2$@ · psp: %3$@";
 "settlements.diffMore" = "+%d more";
 
+/* ---- Account — change password ---- */
+"account.changepw.title" = "Change password";
+"account.changepw.current" = "Current password";
+"account.changepw.new" = "New password";
+"account.changepw.confirm" = "Confirm new password";
+"account.changepw.code" = "Authenticator code";
+"account.changepw.mismatch" = "Passwords don't match";
+"account.changepw.tooShort" = "At least 12 characters";
+"account.changepw.success" = "Password changed";
+"account.changepw.submit" = "Change password";
+
+/* ---- Account — two-factor ---- */
+"account.mfa.title" = "Two-factor authentication";
+"account.mfa.statusOn" = "Two-factor is on";
+"account.mfa.statusOff" = "Two-factor is off";
+"account.mfa.enable" = "Enable two-factor";
+"account.mfa.intro" = "Scan the QR code with an authenticator app, then enter the 6-digit code to confirm.";
+"account.mfa.secretLabel" = "Setup key";
+"account.mfa.code" = "6-digit code";
+"account.mfa.confirm" = "Confirm";
+"account.mfa.enabledToast" = "Two-factor enabled";
+"account.mfa.disable" = "Disable two-factor";
+"account.mfa.disablePassword" = "Account password";
+"account.mfa.disabledToast" = "Two-factor disabled";
+
+/* ---- Organisation profile ---- */
+"org.profile.title" = "Organisation profile";
+"org.profile.sectionIdentity" = "Identity";
+"org.profile.sectionContact" = "Contact";
+"org.profile.sectionAddress" = "Address";
+"org.profile.code" = "Code";
+"org.profile.status" = "Status";
+"org.profile.name" = "Display name";
+"org.profile.type" = "Type";
+"org.profile.typePerson" = "Individual";
+"org.profile.typeCompany" = "Company";
+"org.profile.legalName" = "Legal name";
+"org.profile.taxNumber" = "Tax number";
+"org.profile.commercialRegisterNo" = "Commercial register no.";
+"org.profile.billingEmail" = "Billing email";
+"org.profile.supportEmail" = "Support email";
+"org.profile.phone" = "Phone";
+"org.profile.website" = "Website";
+"org.profile.addressLine1" = "Address line 1";
+"org.profile.addressLine2" = "Address line 2";
+"org.profile.city" = "City";
+"org.profile.country" = "Country (2-letter code)";
+"org.profile.logoURL" = "Logo URL";
+"org.profile.readOnly" = "You can view but not edit these — ask an owner to make changes.";
+"org.profile.save" = "Save changes";
+"org.profile.savedToast" = "Saved";
+"org.profile.errHTTPS" = "Must start with https://";
+"org.profile.errCountry" = "Two uppercase letters, e.g. LY";
+"org.profile.errEmail" = "Enter a valid email";
+
+/* ---- Sub-merchants ---- */
+"subs.title" = "Sub-merchants";
+"subs.empty" = "No sub-merchants yet";
+"subs.add" = "Add sub-merchant";
+"subs.code" = "Code";
+"subs.codePrefix" = "Code prefix";
+"subs.name" = "Name";
+"subs.statusActive" = "Active";
+"subs.paymentsCount" = "%d payments";
+"subs.createdToast" = "Sub-merchant created";
+"subs.codeHint" = "Lowercase letters, digits, - or _";
+"subs.prefixHint" = "2–6 uppercase letters/digits";
+
+"sub.detail.title" = "Sub-merchant";
+"sub.detail.edit" = "Edit";
+"sub.detail.delete" = "Delete sub-merchant";
+"sub.detail.deleteBlocked" = "Has %d payments — disable it instead";
+"sub.detail.users" = "Manage users";
+"sub.detail.updatedToast" = "Updated";
+"sub.detail.deletedToast" = "Deleted";
+
+/* ---- Sub-users ---- */
+"subusers.title" = "Users";
+"subusers.empty" = "No users yet";
+"subusers.invite" = "Invite user";
+"subusers.username" = "Username";
+"subusers.fullName" = "Full name";
+"subusers.email" = "Email";
+"subusers.mobile" = "Mobile";
+"subusers.phone" = "Phone";
+"subusers.role" = "Role";
+"role.subOwner" = "Shop owner";
+"role.subOperator" = "Shop operator";
+"role.subViewer" = "Shop viewer";
+"subusers.inviteLinkTitle" = "Invite link";
+"subusers.inviteSent" = "Sent to %@";
+"subusers.inviteNotSent" = "Couldn't send automatically — copy the link below";
+"subusers.inviteCopy" = "Copy link";
+"subusers.edit" = "Edit";
+"subusers.disable" = "Disable";
+"subusers.reissue" = "Re-issue invite";
+"subusers.clearMFA" = "Clear two-factor";
+"subusers.clearMFACode" = "Your authenticator code";
+"subusers.invitedToast" = "Invited";
+"subusers.updatedToast" = "Updated";
+"subusers.disabledToast" = "Disabled";
+"subusers.reissuedToast" = "Invite re-issued";
+"subusers.mfaClearedToast" = "Two-factor cleared";
+
 /* ---- More ---- */
 "more.title" = "More";
 "more.profile" = "Profile";
@@ -170,6 +274,14 @@
 "more.reports" = "Reports";
 "more.settlements" = "Settlements";
 "more.settlements.hint" = "Reconciliation files matched against your payments";
+"more.security" = "Security";
+"more.business" = "Business";
+"more.changePassword" = "Change password";
+"more.twoFactor" = "Two-factor authentication";
+"more.twoFactorOn" = "On";
+"more.twoFactorOff" = "Off";
+"more.orgProfile" = "Organisation profile";
+"more.subMerchants" = "Sub-merchants";
 
 /* ---- Push fallbacks (used when the FCM/APNs payload omits a title/body) ---- */
 "push.fallback.title" = "PayHub";
@@ -213,7 +325,7 @@
 "Version" = "Version";
 "Server" = "Server";
 "PayHub is on-prem — the server URL was set when you signed in." = "PayHub is on-prem — the server URL was set when you signed in.";
-"To change your name, email, or two-factor settings, use the PayHub web portal." = "To change your name, email, or two-factor settings, use the PayHub web portal.";
+"Manage your two-factor and password here, or your full profile on the PayHub web portal." = "Manage your two-factor and password here, or your full profile on the PayHub web portal.";
 "Loading pay-links…" = "Loading pay-links…";
 "No pay-links yet" = "No pay-links yet";
 "Nothing here" = "Nothing here";

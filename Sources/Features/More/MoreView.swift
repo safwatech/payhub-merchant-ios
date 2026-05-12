@@ -17,6 +17,8 @@ struct MoreView: View {
                 profileSection
                 if let me = repository.me, let ent = me.entitlements { entitlementsSection(ent) }
                 notificationsSection
+                securitySection
+                businessSection
                 reportsSection
                 accountSection
                 footerSection
@@ -34,9 +36,19 @@ struct MoreView: View {
                 case let .payment(id): PaymentDetailView(paymentID: id)
                 }
             }
+            .navigationDestination(for: SubMerchantsRoute.self) { route in
+                switch route {
+                case let .detail(id): SubMerchantDetailView(subID: id)
+                case let .users(sid): SubUsersView(subID: sid)
+                }
+            }
             .navigationDestination(for: MoreRoute.self) { route in
                 switch route {
                 case .settlements: SettlementsView()
+                case .changePassword: ChangePasswordView()
+                case .mfaSettings: MfaSettingsView()
+                case .orgProfile: OrgProfileView()
+                case .subMerchants: SubMerchantsView()
                 }
             }
             .sheet(isPresented: $showForgot) {
@@ -102,9 +114,45 @@ struct MoreView: View {
             } header: {
                 Text("Profile")
             } footer: {
-                Text("To change your name, email, or two-factor settings, use the PayHub web portal.")
+                Text("Manage your two-factor and password here, or your full profile on the PayHub web portal.")
             }
-            // TODO(payhub): in-app change-password / MFA management once SDK 1.2 adds those endpoints.
+        }
+    }
+
+    private var securitySection: some View {
+        Section {
+            NavigationLink(value: MoreRoute.changePassword) {
+                Label(LocalizedStringKey("more.changePassword"), systemImage: "key")
+            }
+            NavigationLink(value: MoreRoute.mfaSettings) {
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(LocalizedStringKey("more.twoFactor"))
+                        Text(LocalizedStringKey((repository.me?.mfaEnabled ?? false) ? "more.twoFactorOn" : "more.twoFactorOff"))
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                } icon: { Image(systemName: "lock.shield") }
+            }
+        } header: {
+            Text(LocalizedStringKey("more.security"))
+        }
+    }
+
+    @ViewBuilder private var businessSection: some View {
+        if let me = repository.me, me.subMerchant == nil {
+            Section {
+                NavigationLink(value: MoreRoute.orgProfile) {
+                    Label(LocalizedStringKey("more.orgProfile"), systemImage: "building.2")
+                }
+                if me.canManageSubs {
+                    NavigationLink(value: MoreRoute.subMerchants) {
+                        Label(LocalizedStringKey("more.subMerchants"), systemImage: "person.2.badge.gearshape")
+                    }
+                }
+                // TODO(payhub): SUB_OWNER cashier self-management screen (subs managing their own staff)
+            } header: {
+                Text(LocalizedStringKey("more.business"))
+            }
         }
     }
 

@@ -32,12 +32,25 @@ struct AppError: Error, Identifiable {
         case let .api(kind, code, status, message, _, requestId):
             switch kind {
             case .authentication:
+                // A 401 on the password / MFA endpoints isn't a session expiry —
+                // it's "wrong password" / "wrong code" / "code needed". Keep the
+                // session (don't `isAuthFailure`), so the screen can show the
+                // inline error (and the change-password screen reveals the TOTP
+                // field on `mfa_required`).
+                if Self.nonSessionAuthCodes.contains(code) {
+                    return AppError(title: "Check your input",
+                                    message: friendlyMessage(code, fallback: message),
+                                    requestId: requestId)
+                }
                 return AppError(title: "Session expired",
                                 message: "Please sign in again.",
                                 isAuthFailure: true, requestId: requestId)
             case .permission:
-                return AppError(title: "Not allowed",
-                                message: friendlyMessage(code, fallback: "Your role can't perform this action."),
+                // License / entitlement 403s carry a useful server message
+                // ("contact your vendor to upgrade") — surface it verbatim.
+                let permFallback = code.hasPrefix("hub.license.") ? message : "Your role can't perform this action."
+                return AppError(title: code.hasPrefix("hub.license.") ? "Upgrade required" : "Not allowed",
+                                message: friendlyMessage(code, fallback: permFallback),
                                 requestId: requestId)
             case .notFound:
                 return AppError(title: "Not found",
@@ -88,6 +101,19 @@ struct AppError: Error, Identifiable {
         }
     }
 
+    /// 401 codes that mean "your input was wrong", not "your session died".
+    private static let nonSessionAuthCodes: Set<String> = [
+        "hub.merchant.mfa_required",
+        "hub.merchant.bad_mfa",
+        "hub.merchant.bad_credentials",
+    ]
+
+    /// Whether a `PayhubError` carrying this code means the change-password
+    /// screen should reveal its authenticator-code field.
+    var requiresMFACode: Bool {
+        message.lowercased().contains("authenticator code")
+    }
+
     /// Map a handful of well-known PayHub error codes to plain English.
     private static func friendlyMessage(_ code: String, fallback: String) -> String {
         switch code {
@@ -109,6 +135,31 @@ struct AppError: Error, Identifiable {
             return "That verification code wasn't right."
         case "hub.auth.invalid_token":
             return "This link is invalid or has expired. Ask for a new one."
+        // --- account / MFA / org / sub-merchant management ---
+        case "hub.merchant.mfa_required":
+            return "Enter your authenticator code to confirm."
+        case "hub.merchant.bad_mfa":
+            return "That code didn't match."
+        case "hub.merchant.bad_credentials":
+            return "Password doesn't match."
+        case "hub.merchant.mfa_missing":
+            return "Enter your authenticator code to confirm."
+        case "hub.merchant.mfa_already_enabled":
+            return "Two-factor is already enabled on your account."
+        case "hub.merchant.mfa_not_enrolled":
+            return "Start by enabling two-factor first."
+        case "hub.merchant.mfa_not_enabled":
+            return "Two-factor isn't currently enabled."
+        case "hub.merchant.last_sub_owner":
+            return "That would leave the shop with no active owner."
+        case "hub.merchant.self_modify_forbidden":
+            return "You can't change your own role or status here."
+        case "hub.merchant.invite_no_contact", "hub.merchant.no_contact":
+            return "Add an email or mobile number so the invite can be delivered."
+        case "hub.merchant.owner_no_mfa":
+            return "Enable two-factor on your own account before clearing someone else's."
+        case "hub.license.limit_exceeded", "hub.license.feature_unavailable":
+            return fallback   // server message already says "contact your vendor to upgrade"
         default:
             return fallback
         }
