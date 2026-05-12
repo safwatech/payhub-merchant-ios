@@ -32,6 +32,12 @@ struct MerchantRawAPI {
     let baseURL: URL
     /// Pulls a fresh access token each call so token-refresh in the SDK is honoured.
     let accessTokenProvider: @Sendable () async -> String?
+    /// On a 401, runs a one-shot bearer refresh and returns the new access token
+    /// (or nil if the refresh token is also dead). Mirrors the SDK's transparent
+    /// 401-refresh for the raw shim so an access-token expiry mid-session doesn't
+    /// bounce the user to login. Defaults to "no refresh" for tests / callers that
+    /// don't wire it.
+    var tokenRefresh: @Sendable () async -> String? = { nil }
     var session: URLSession = .shared
 
     // MARK: Devices
@@ -231,6 +237,21 @@ struct MerchantRawAPI {
     // MARK: - Plumbing
 
     private func send(method: String, path: String, query: [URLQueryItem]?, body: Data?) async throws -> Data {
+        let token = await accessTokenProvider()
+        var (data, http) = try await perform(method: method, path: path, query: query, body: body, token: token)
+        // 401 on an authed call → one-shot refresh, then retry once (mirrors the SDK).
+        if http.statusCode == 401, token != nil, let fresh = await tokenRefresh() {
+            (data, http) = try await perform(method: method, path: path, query: query, body: body, token: fresh)
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let retryAfter = http.value(forHTTPHeaderField: "Retry-After").flatMap(Int.init)
+            throw mapEnvelope(status: http.statusCode, body: data, retryAfter: retryAfter)
+        }
+        return data
+    }
+
+    private func perform(method: String, path: String, query: [URLQueryItem]?,
+                         body: Data?, token: String?) async throws -> (Data, HTTPURLResponse) {
         var components = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
         components?.queryItems = query
         guard let url = components?.url else {
@@ -240,7 +261,7 @@ struct MerchantRawAPI {
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Accept")
         req.setValue("payhub-merchant-ios/\(AppInfo.version)", forHTTPHeaderField: "User-Agent")
-        if let token = await accessTokenProvider() {
+        if let token {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         if let body {
@@ -252,11 +273,7 @@ struct MerchantRawAPI {
             guard let http = response as? HTTPURLResponse else {
                 throw PayhubError.transport(kind: .decode, message: "non-HTTP response")
             }
-            guard (200..<300).contains(http.statusCode) else {
-                let retryAfter = http.value(forHTTPHeaderField: "Retry-After").flatMap(Int.init)
-                throw mapEnvelope(status: http.statusCode, body: data, retryAfter: retryAfter)
-            }
-            return data
+            return (data, http)
         } catch let pe as PayhubError {
             throw pe
         } catch let urlErr as URLError {

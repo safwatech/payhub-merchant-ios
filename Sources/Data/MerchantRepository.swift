@@ -35,6 +35,10 @@ final class MerchantRepository: ObservableObject {
     private let settings: AppSettings
     private var client: PayhubMerchantClient
 
+    /// In-flight bearer refresh, so a burst of concurrent 401s from the raw shim
+    /// refreshes the (single-use) refresh token exactly once. See `refreshAccessToken()`.
+    private var refreshTask: Task<String?, Never>?
+
     /// The merchant identity from the last `me()`. `nil` when not authenticated.
     var me: MerchantMe? {
         if case let .authenticated(m) = authState { return m }
@@ -69,11 +73,30 @@ final class MerchantRepository: ObservableObject {
         client = MerchantRepository.makeClient(baseURL: settings.serverURL, tokens: tokens, tokenStore: tokenStore)
     }
 
-    /// A `@Sendable` provider of the current access token, for `MerchantRawAPI`.
+    /// A `MerchantRawAPI` wired to the live token: it reads a fresh access token
+    /// per call and, on a 401, asks `refreshAccessToken()` for a new one and retries.
     func makeRawAPI() -> MerchantRawAPI {
         let c = client
         return MerchantRawAPI(baseURL: settings.serverURL,
-                              accessTokenProvider: { await c.currentTokens()?.accessToken })
+                              accessTokenProvider: { await c.currentTokens()?.accessToken },
+                              tokenRefresh: { [weak self] in await self?.refreshAccessToken() })
+    }
+
+    /// One-shot bearer refresh via the SDK's `/merchant/auth/token/refresh` (which
+    /// rotates the refresh token and persists the new pair through
+    /// `onTokensRefreshed`). Coalesced: concurrent callers await the same in-flight
+    /// `Task` rather than burning the single-use refresh token more than once.
+    /// Returns the new access token, or nil if the refresh token is also dead.
+    func refreshAccessToken() async -> String? {
+        if let inFlight = refreshTask { return await inFlight.value }
+        let task = Task<String?, Never> { [client] in
+            guard let rt = await client.currentTokens()?.refreshToken else { return nil }
+            return try? await client.auth.tokenRefresh(refreshToken: rt).accessToken
+        }
+        refreshTask = task
+        let result = await task.value
+        refreshTask = nil
+        return result
     }
 
     // MARK: - Bootstrap
