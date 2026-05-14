@@ -49,7 +49,6 @@ struct SubMerchantDetailView: View {
             vm.bind(repository: repository)
             vm.onAppear()
         }
-        // TODO(payhub): sub-merchant API keys (provision a scoped api_key for the sub)
     }
 
     @ViewBuilder private func form(_ sub: SubMerchant) -> some View {
@@ -77,6 +76,17 @@ struct SubMerchantDetailView: View {
             Section {
                 NavigationLink(value: SubMerchantsRoute.users(subID: sub.id)) {
                     Label(LocalizedStringKey("sub.detail.users"), systemImage: "person.2")
+                }
+                // Sub-merchant API keys (0.4.0). Parent keys remain
+                // web-portal-only — see CLAUDE.md "Native mobile apps".
+                NavigationLink(value: SubMerchantsRoute.apiKeys(subID: sub.id)) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(LocalizedStringKey("sub.detail.tab.apiKeys"))
+                            Text(LocalizedStringKey("sub.apiKeys.empty.body"))
+                                .font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                        }
+                    } icon: { Image(systemName: "key.horizontal") }
                 }
             }
 

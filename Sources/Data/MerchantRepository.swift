@@ -340,6 +340,34 @@ final class MerchantRepository: ObservableObject {
         catch { throw mapped(error) }
     }
 
+    // MARK: - Sub-merchant API keys (SDK 1.2)
+
+    /// List the masked API keys minted for one sub-merchant.
+    func listSubApiKeys(subID: String) async throws -> [MerchantApiKey] {
+        do { return try await client.subMerchants.apiKeys.list(subMerchantId: subID) }
+        catch { throw mapped(error) }
+    }
+
+    /// Mint a new sub-API-key. The plaintext `secret` on the result is shown
+    /// **once** — there is no way to recover it (the server stores only an
+    /// argon2 hash). UI must surface it in a copy-or-it-is-gone sheet.
+    func createSubApiKey(subID: String,
+                         scopes: [String],
+                         allowedIps: [String] = [],
+                         rateLimitTier: String = "standard") async throws -> MerchantApiKeyWithSecret {
+        do { return try await client.subMerchants.apiKeys.create(
+            subMerchantId: subID, scopes: scopes,
+            allowedIps: allowedIps, rateLimitTier: rateLimitTier) }
+        catch { throw mapped(error) }
+    }
+
+    /// Revoke a sub-API-key. Returns the now-revoked masked row.
+    func revokeSubApiKey(subID: String, keyID: String) async throws -> MerchantApiKey {
+        do { return try await client.subMerchants.apiKeys.revoke(
+            subMerchantId: subID, keyId: keyID) }
+        catch { throw mapped(error) }
+    }
+
     // MARK: - Push
 
     func registerDevice(apnsTokenHex: String) async throws {

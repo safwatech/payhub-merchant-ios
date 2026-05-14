@@ -41,6 +41,7 @@ struct MoreView: View {
                 switch route {
                 case let .detail(id): SubMerchantDetailView(subID: id)
                 case let .users(sid): SubUsersView(subID: sid)
+                case let .apiKeys(sid): SubMerchantApiKeysView(subID: sid)
                 }
             }
             .navigationDestination(for: MoreRoute.self) { route in
@@ -175,7 +176,6 @@ struct MoreView: View {
                         Label(LocalizedStringKey("more.subMerchants"), systemImage: "person.2.badge.gearshape")
                     }
                 }
-                // TODO(payhub): SUB_OWNER cashier self-management screen (subs managing their own staff)
             } header: {
                 Text(LocalizedStringKey("more.business"))
             }

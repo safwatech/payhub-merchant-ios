@@ -126,4 +126,7 @@ enum MoreRoute: Hashable {
 enum SubMerchantsRoute: Hashable {
     case detail(id: String)
     case users(subID: String)
+    /// Sub-merchant API keys (0.4.0). Parent-merchant keys remain
+    /// web-portal-only — see CLAUDE.md "Native mobile apps" §.
+    case apiKeys(subID: String)
 }
