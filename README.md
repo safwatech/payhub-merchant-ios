@@ -19,7 +19,7 @@ the official [`payhub-swift`](../../sdks/swift) SDK's bearer-token merchant clie
 | Area | Screens |
 | --- | --- |
 | **Bootstrap** | Launch splash → reads the Keychain token pair → `auth.me()` → main tabs, or → Login on auth failure. |
-| **Auth** | Login (server URL in an "Advanced" disclosure, merchant code, optional shop code, username, password) · MFA challenge · Forgot-password sheet · Accept-invite (deep link `payhub://accept-invite?token=…&m=…&u=…&s=…`). |
+| **Auth** | Login (server URL in an "Advanced" disclosure, merchant code, optional shop code, username, password) · MFA challenge · Forgot-password sheet · Accept-invite (Universal Link `https://app.payhub.ly/m/accept-invite?token=…&m=…&u=…&s=…`; legacy `payhub://accept-invite?…` kept through 0.4.0 for in-flight emails). |
 | **Dashboard** | Counter cards (paid + volume, in-flight, active pay-links, needs-follow-up) · 24h / 3d / 7d window picker · "other outcomes" list · per-shop breakdown for parent merchants (best-effort raw `?group_by=sub`). Pull-to-refresh. |
 | **Pay-links** | Filterable list (All / Needs follow-up / Active / Paid / Expired / Cancelled) with cursor paging · Create sheet (amount, description, customer phone, PSP allow-list, expiry, auto-generated order ref, `ShareLink` confirmation) · Detail (re-share / extend / clone / cancel — gated on a write role). Pull-to-refresh. |
 | **More** | Profile + entitlements · Push-notifications toggle (→ `UNUserNotificationCenter` + APNs registration + raw `POST /merchant/devices`) · Request password reset · Sign out · App/server footer. |
@@ -35,13 +35,20 @@ the official [`payhub-swift`](../../sdks/swift) SDK's bearer-token merchant clie
   (rebuilt when the server URL or token pair changes), wires `onTokensRefreshed`
   to the Keychain so transparent refresh persists, maps `PayhubError` → a
   friendly `AppError`, and publishes an `authState` the UI watches.
-- **`KeychainTokenStore`** — the `TokenPair` as JSON in a `kSecClassGenericPassword`
-  item (service `ly.payhub.merchant`, `kSecAttrAccessibleAfterFirstUnlock`).
-  Non-secret prefs (server URL, push flag, login pre-fill) are in `UserDefaults`
-  via `AppSettings`.
-- **`MerchantRawAPI`** — a tiny `URLSession` client for the few `/merchant/*`
-  endpoints **not** in the 1.1.0 SDK: `POST`/`DELETE /merchant/devices` and
-  `GET /merchant/dashboard?group_by=sub`. Pulls a fresh access token per call.
+- **`KeychainTokenStore`** — since 0.4.0 the access token and refresh token
+  live in **two** `kSecClassGenericPassword` items (service `ly.payhub.merchant`,
+  accounts `access-token` + `refresh-token`). The access token stays on
+  `kSecAttrAccessibleAfterFirstUnlock`; the refresh token is delegated to
+  `RefreshTokenVault`, which adds a biometric access-control gate
+  (`[.userPresence, .biometryCurrentSet]`) whenever `AppSettings.appLockEnabled`
+  is on. A one-time migration moves the pre-0.4.0 single-JSON-blob item into
+  the split shape on first load. Non-secret prefs (server URL, push flag, login
+  pre-fill, app-lock + crash-reporting toggles) are in `UserDefaults` via
+  `AppSettings`.
+- **All `/merchant/*` traffic** rides `payhub-swift` 1.2.0 directly — there's
+  no in-app raw HTTP layer. The SDK's actor owns transparent 401 → refresh →
+  retry; the app just maps `PayhubError` / `MerchantValidationError` /
+  `MfaRequiredError` → `AppError` and renders.
 - **Push** — `AppDelegate` (`@UIApplicationDelegateAdaptor`) handles the APNs
   token callback (→ register the device), notification-tap routing (deep-link to
   a pay-link), and foreground presentation; `PushManager` coordinates
@@ -51,15 +58,12 @@ the official [`payhub-swift`](../../sdks/swift) SDK's bearer-token merchant clie
   generated from `web/public/favicon-512.png` (the PayHub mark composited onto an
   opaque background — iOS icons can't have alpha).
 
-### Known gaps — pending `payhub-swift` 1.2
+### Known gaps
 
-The 1.1.0 SDK covers **auth, pay-links, and `reports.dashboard`** — nothing else.
-So this app does **not** (yet) have: a merchant-payments list, change-password,
-in-app MFA management, settlements, or sub-merchant management. Those are marked
-with `// TODO(payhub): needs SDK 1.2 …` where the seam is, rather than shipped
-half-broken. The dashboard's per-shop breakdown also depends on the server
-returning `sub_breakdown` from `?group_by=sub`; the app shows a notice if it
-doesn't.
+With `payhub-swift` 1.2.0 (shipped 2026-05-14) the SDK now covers **every**
+`/merchant/*` endpoint the app exercises. The remaining gaps are deliberate
+product scope, not blocked work: webhook / PSP-gateway / parent-merchant
+API-key management stay web-portal-only (see CLAUDE.md "Native mobile apps").
 
 ---
 
@@ -99,14 +103,14 @@ packages:
     path: ../../sdks/swift
 ```
 
-Once `payhub-swift` **1.1.0** is published to the `safwatech/payhub-swift` GitHub
+Once `payhub-swift` **1.2.0** is published to the `safwatech/payhub-swift` GitHub
 mirror, switch that to a versioned remote dependency:
 
 ```yaml
 packages:
   Payhub:
     url: https://github.com/safwatech/payhub-swift
-    from: 1.1.0
+    from: 1.2.0
 ```
 
 (That's also a prerequisite for the standalone repo, which won't have
