@@ -330,3 +330,66 @@
 "Nothing here" = "لا شيء هنا";
 "Create a pay-link and share it — the customer picks how to pay." = "أنشئ رابط دفع وشاركه — العميل يختار طريقة الدفع.";
 "Filter" = "تصفية";
+
+/* ---- Diagnostics (0.4.0) ---- */
+"more.diagnostics" = "التشخيص";
+"more.diagnostics.hint" = "أرسل تقارير الأعطال مجهولة الهوية لمساعدتنا في إصلاح الأخطاء";
+"diagnostics.title" = "التشخيص";
+"diagnostics.toggle" = "إرسال تقارير الأعطال مجهولة الهوية";
+"diagnostics.blurb" = "تشمل تقارير الأعطال طراز الجهاز ونسخة iOS وأثر التنفيذ، ولا تتضمّن أبدًا معلومات الحساب أو بيانات المدفوعات أو مُعرّفات التاجر. متوقّفة افتراضيًا.";
+"diagnostics.unavailable" = "لم تُهيَّأ تقارير الأعطال في هذه النسخة من PayHub Merchant.";
+
+/* ---- Sub-merchant detail tabs (0.4.0) ---- */
+"sub.detail.tab.cashiers" = "الكاشيرات";
+"sub.detail.tab.apiKeys" = "مفاتيح API";
+"sub.apiKeys.title" = "مفاتيح API";
+"sub.apiKeys.empty" = "لا توجد مفاتيح بعد";
+"sub.apiKeys.empty.body" = "أنشئ مفتاحًا مُقيَّدًا عندما يحتاج نظام طرف ثالث إلى الاتصال بـ PayHub باسم هذا المتجر.";
+"sub.apiKeys.create" = "إنشاء مفتاح API";
+"sub.apiKeys.scopes" = "الصلاحيات";
+"sub.apiKeys.allowedIps" = "عناوين IP المسموحة";
+"sub.apiKeys.allowedIps.hint" = "افصِل بفواصل. اتركه فارغًا للسماح بأي IP.";
+"sub.apiKeys.rateLimitTier" = "فئة الحد المعدّل";
+"sub.apiKeys.revoke" = "إبطال";
+"sub.apiKeys.revoked" = "مُبطَل";
+"sub.apiKeys.active" = "فعّال";
+"sub.apiKeys.lastUsed" = "آخر استخدام";
+"sub.apiKeys.created" = "تاريخ الإنشاء";
+"sub.apiKeys.never" = "أبدًا";
+"sub.apiKeys.reveal.title" = "احفظ هذا المفتاح الآن";
+"sub.apiKeys.reveal.body" = "سيظهر السر مرة واحدة فقط. يخزّن PayHub بصمة argon2 فقط — لا يمكن استعادته لاحقًا.";
+"sub.apiKeys.reveal.copy" = "نسخ المفتاح";
+"sub.apiKeys.reveal.done" = "حفظتُه";
+
+/* ---- Error catalogue (0.4.0) ---- */
+"err.generic" = "حدث خطأ ما.";
+"err.merchant.invalid_credentials" = "اسم المستخدم أو كلمة المرور غير صحيحة.";
+"err.merchant.locked_out" = "الحساب مقفل. أعد المحاولة بعد %1$@.";
+"err.merchant.last_owner" = "يجب الإبقاء على مالك واحد على الأقل.";
+"err.merchant.disabled" = "هذا الحساب معطل.";
+"err.mfa_required_envelope" = "أدخل رمز التحقق الثنائي للمتابعة.";
+"err.mfa.invalid_code" = "رمز التحقق الثنائي غير صحيح.";
+"err.mfa.already_enabled" = "التحقق الثنائي مفعل بالفعل.";
+"err.password.too_weak" = "كلمة المرور ضعيفة.";
+"err.password.reuse" = "لا يمكن إعادة استخدام كلمة مرور سابقة.";
+"err.password.current_wrong" = "كلمة المرور الحالية غير صحيحة.";
+"err.auth.session_expired" = "انتهت الجلسة. سجّل الدخول مرة أخرى.";
+"err.auth.bearer_expired" = "جارٍ تحديث الجلسة…";
+"err.pay_link.quota_exceeded" = "لقد بلغت الحد الأقصى لروابط الدفع النشطة.";
+"err.pay_link.expired" = "انتهت صلاحية رابط الدفع.";
+"err.pay_link.cancelled" = "تم إلغاء رابط الدفع.";
+"err.pay_link.already_paid" = "تم دفع هذا الرابط بالفعل.";
+"err.pay_link.max_retries" = "تجاوز الرابط الحد الأقصى لإعادة المحاولة.";
+"err.sub_merchant.code_taken" = "كود المتجر مستخدم بالفعل.";
+"err.sub_merchant.has_payments" = "لا يمكن الحذف — توجد مدفوعات مرتبطة.";
+"err.sub_merchant.disabled" = "المتجر معطل.";
+"err.sub_merchant.aggregator_required" = "تتطلب إدارة فروع الباقة Pro.";
+"err.sub_user.last_owner" = "يجب الإبقاء على مالك متجر واحد على الأقل.";
+"err.sub_user.username_taken" = "اسم المستخدم مستخدم بالفعل.";
+"err.device.platform_keys_missing" = "إعداد الإشعارات غير مكتمل.";
+"err.device.token_too_long" = "رمز الإشعار طويل جدًا.";
+"err.api_key.label_taken" = "تسمية المفتاح مستخدمة بالفعل.";
+"err.api_key.revoked" = "تم إلغاء هذا المفتاح.";
+"err.invite.expired" = "انتهت صلاحية الدعوة.";
+"err.invite.consumed" = "تم استخدام هذه الدعوة من قبل.";
+"err.rate_limited" = "محاولات كثيرة. حاول بعد %1$@.";

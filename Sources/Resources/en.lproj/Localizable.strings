@@ -341,3 +341,67 @@
 "Nothing here" = "Nothing here";
 "Create a pay-link and share it — the customer picks how to pay." = "Create a pay-link and share it — the customer picks how to pay.";
 "Filter" = "Filter";
+
+/* ---- Diagnostics (More → Diagnostics, 0.4.0) ---- */
+"more.diagnostics" = "Diagnostics";
+"more.diagnostics.hint" = "Send anonymous crash reports to help us fix bugs";
+"diagnostics.title" = "Diagnostics";
+"diagnostics.toggle" = "Send anonymous crash reports";
+"diagnostics.blurb" = "Crash reports include device model, iOS version, and a stack trace. They never include account info, payment data, or merchant identifiers. Off by default.";
+"diagnostics.unavailable" = "Crash reporting isn't configured in this build of PayHub Merchant.";
+
+/* ---- Sub-merchant detail tabs (0.4.0) ---- */
+"sub.detail.tab.cashiers" = "Cashiers";
+"sub.detail.tab.apiKeys" = "API keys";
+"sub.apiKeys.title" = "API keys";
+"sub.apiKeys.empty" = "No API keys yet";
+"sub.apiKeys.empty.body" = "Mint a scoped key when a vendor system needs to call PayHub on this shop's behalf.";
+"sub.apiKeys.create" = "Create API key";
+"sub.apiKeys.scopes" = "Scopes";
+"sub.apiKeys.allowedIps" = "Allowed IPs";
+"sub.apiKeys.allowedIps.hint" = "Comma-separated. Leave blank to allow any IP.";
+"sub.apiKeys.rateLimitTier" = "Rate-limit tier";
+"sub.apiKeys.revoke" = "Revoke";
+"sub.apiKeys.revoked" = "Revoked";
+"sub.apiKeys.active" = "Active";
+"sub.apiKeys.lastUsed" = "Last used";
+"sub.apiKeys.created" = "Created";
+"sub.apiKeys.never" = "Never";
+"sub.apiKeys.reveal.title" = "Save this key now";
+"sub.apiKeys.reveal.body" = "We'll only show this secret once. PayHub stores only an argon2 hash — there is no recovery.";
+"sub.apiKeys.reveal.copy" = "Copy key";
+"sub.apiKeys.reveal.done" = "I've saved it";
+
+/* ---- Error catalogue (0.4.0) — codes mapped in ErrorCatalog.swift.
+   Positional `%1$@` markers interpolate `MerchantValidationError.params`. */
+"err.generic" = "Something went wrong.";
+"err.merchant.invalid_credentials" = "Incorrect username or password.";
+"err.merchant.locked_out" = "Account locked. Try again in %1$@.";
+"err.merchant.last_owner" = "You must keep at least one owner.";
+"err.merchant.disabled" = "This account is disabled.";
+"err.mfa_required_envelope" = "Enter your two-factor code to continue.";
+"err.mfa.invalid_code" = "That two-factor code is invalid.";
+"err.mfa.already_enabled" = "Two-factor is already enabled.";
+"err.password.too_weak" = "Password is too weak.";
+"err.password.reuse" = "You can't reuse a recent password.";
+"err.password.current_wrong" = "Your current password is incorrect.";
+"err.auth.session_expired" = "Your session expired. Sign in again.";
+"err.auth.bearer_expired" = "Refreshing session…";
+"err.pay_link.quota_exceeded" = "You've hit your active pay-link limit.";
+"err.pay_link.expired" = "This pay-link has expired.";
+"err.pay_link.cancelled" = "This pay-link was cancelled.";
+"err.pay_link.already_paid" = "This pay-link is already paid.";
+"err.pay_link.max_retries" = "This pay-link has reached its retry limit.";
+"err.sub_merchant.code_taken" = "That shop code is already in use.";
+"err.sub_merchant.has_payments" = "Can't delete — payments reference this shop.";
+"err.sub_merchant.disabled" = "This shop is disabled.";
+"err.sub_merchant.aggregator_required" = "Multi-shop requires the Pro tier.";
+"err.sub_user.last_owner" = "You must keep at least one shop owner.";
+"err.sub_user.username_taken" = "That username is already taken.";
+"err.device.platform_keys_missing" = "Push setup is incomplete on this device.";
+"err.device.token_too_long" = "Push token is too long.";
+"err.api_key.label_taken" = "That key label is already used.";
+"err.api_key.revoked" = "That API key has been revoked.";
+"err.invite.expired" = "This invitation has expired.";
+"err.invite.consumed" = "This invitation was already used.";
+"err.rate_limited" = "Too many attempts. Try again in %1$@.";
