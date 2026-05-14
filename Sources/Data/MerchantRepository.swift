@@ -357,11 +357,13 @@ final class MerchantRepository: ObservableObject {
     // MARK: - Push
 
     func registerDevice(apnsTokenHex: String) async throws {
-        do { try await makeRawAPI().registerDevice(apnsTokenHex: apnsTokenHex) } catch { throw mapped(error) }
+        do { _ = try await client.devices.registerIOS(apnsTokenHex: apnsTokenHex) }
+        catch { throw mapped(error) }
     }
 
     func unregisterDevice(apnsTokenHex: String) async throws {
-        do { try await makeRawAPI().unregisterDevice(apnsTokenHex: apnsTokenHex) } catch { throw mapped(error) }
+        do { try await client.devices.unregister(token: apnsTokenHex) }
+        catch { throw mapped(error) }
     }
 
     // MARK: - Helpers
