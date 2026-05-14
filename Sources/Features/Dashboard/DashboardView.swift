@@ -115,19 +115,23 @@ struct DashboardView: View {
                            systemImage: "building.2")
             } else {
                 VStack(spacing: 0) {
+                    // SDK 1.2 slimmed `SubBreakdownRow` to flat
+                    // `paidCount` + `paidVolumeMinor`. The 0.3.0 dashboard
+                    // also showed per-sub in-flight / active-pay-link
+                    // counters — those now live on the **parent** total
+                    // only (the per-sub breakdown is paid-only). Mirrors
+                    // the Android 0.4.0 change in DashboardScreen.kt.
                     ForEach(Array(vm.subRows.enumerated()), id: \.element.id) { idx, row in
                         HStack(alignment: .top) {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(row.name ?? row.code ?? row.subMerchantId)
+                                Text(row.name.isEmpty ? row.code : row.name)
                                     .font(.subheadline.weight(.medium))
-                                if let code = row.code { Text(code).font(.caption).foregroundStyle(.secondary) }
+                                if !row.code.isEmpty { Text(row.code).font(.caption).foregroundStyle(.secondary) }
                             }
                             Spacer()
                             VStack(alignment: .trailing, spacing: 2) {
-                                Text("\(row.paid) paid · \(Money.format(minor: row.volumeMinor, currency: vm.currency))")
+                                Text("\(row.paidCount) paid · \(Money.format(minor: row.paidVolumeMinor, currency: vm.currency))")
                                     .font(.caption).monospacedDigit()
-                                Text("\(row.inflight) in flight · \(row.activePayLinks) links")
-                                    .font(.caption2).foregroundStyle(.secondary)
                             }
                         }
                         .padding(.vertical, 10).padding(.horizontal, 14)

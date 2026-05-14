@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreImage.CIFilterBuiltins
+import Payhub
 
 /// In-app two-factor management: enable (scan QR / type setup key → confirm a
 /// 6-digit code) or disable (re-enter the account password). Mirrors the admin
@@ -61,7 +62,7 @@ struct MfaSettingsView: View {
     private func enrolSection(_ enrol: MfaEnrol) -> some View {
         Group {
             Section {
-                if let qr = QRImage.make(from: enrol.otpauthURI) {
+                if let qr = QRImage.make(from: enrol.otpauthUri) {
                     HStack {
                         Spacer()
                         Image(uiImage: qr)

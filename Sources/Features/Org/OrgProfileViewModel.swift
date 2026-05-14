@@ -63,7 +63,7 @@ final class OrgProfileViewModel: ObservableObject {
         addressLine2 = info.addressLine2 ?? ""
         city = info.city ?? ""
         country = info.country ?? ""
-        logoURL = info.logoURL ?? ""
+        logoURL = info.logoUrl ?? ""
     }
 
     // MARK: - Validation (mirrors the server's UpdateOrgBody)
@@ -125,7 +125,7 @@ final class OrgProfileViewModel: ObservableObject {
         built.addressLine2 = diff(addressLine2, original.addressLine2)
         built.city = diff(city, original.city)
         built.country = diff(country, original.country)
-        built.logoURL = diff(logoURL, original.logoURL)
+        built.logoUrl = diff(logoURL, original.logoUrl)
         return built
     }
 
