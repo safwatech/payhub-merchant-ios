@@ -9,6 +9,24 @@ enum DeepLink: Equatable {
     case payLink(id: String)
 
     static func parse(_ url: URL) -> DeepLink? {
+        // Universal Link form (0.4.0+): `https://app.payhub.ly/m/accept-invite?token=…`.
+        // Authoritative ID is hostname; path-prefix decides the route. Anything
+        // else under `app.payhub.ly` is intentionally ignored so a stray
+        // `/some/marketing/page` URL doesn't open the app to a blank screen —
+        // the OS will fall back to Safari.
+        if url.scheme?.lowercased() == "https", url.host?.lowercased() == "app.payhub.ly" {
+            if url.path.hasPrefix("/m/accept-invite") {
+                if let invite = parseInvite(url) {
+                    return .acceptInvite(token: invite.token, merchantCode: invite.merchantCode,
+                                          username: invite.username, subCode: invite.subCode)
+                }
+            }
+            return nil
+        }
+
+        // Legacy custom-scheme form (kept through 0.4.0 for in-flight invite
+        // emails) + the push pay-link path, which is a private custom-scheme
+        // ride and not a user-facing URL.
         guard url.scheme?.lowercased() == "payhub" else { return nil }
         let host = url.host?.lowercased() ?? ""
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -17,8 +35,11 @@ enum DeepLink: Equatable {
 
         switch host {
         case "accept-invite":
-            guard let token = q("token"), !token.isEmpty else { return nil }
-            return .acceptInvite(token: token, merchantCode: q("m"), username: q("u"), subCode: q("s"))
+            if let invite = parseInvite(url) {
+                return .acceptInvite(token: invite.token, merchantCode: invite.merchantCode,
+                                      username: invite.username, subCode: invite.subCode)
+            }
+            return nil
         case "pay-link", "paylink":
             // payhub://pay-link/<id>  or  payhub://pay-link?id=<id>
             let pathID = url.pathComponents.first { $0 != "/" }
@@ -27,6 +48,23 @@ enum DeepLink: Equatable {
         default:
             return nil
         }
+    }
+
+    /// Pure parser for the invite query string — shared by the Universal Link
+    /// (`https://app.payhub.ly/m/accept-invite?…`) and legacy custom-scheme
+    /// (`payhub://accept-invite?…`) entry points. Returns `nil` when the
+    /// required `token` is missing or empty.
+    struct Invite: Equatable {
+        let token: String
+        let merchantCode: String?
+        let username: String?
+        let subCode: String?
+    }
+    static func parseInvite(_ url: URL) -> Invite? {
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        func q(_ name: String) -> String? { items.first { $0.name == name }?.value }
+        guard let token = q("token"), !token.isEmpty else { return nil }
+        return Invite(token: token, merchantCode: q("m"), username: q("u"), subCode: q("s"))
     }
 
     /// From an APNs payload: `{ "payhub": { "kind": "pay_link", "id": "…" } }`.

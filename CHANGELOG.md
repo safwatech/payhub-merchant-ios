@@ -3,6 +3,72 @@
 All notable changes to **PayHub Merchant** (iOS) are documented here. This
 project follows [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] — 2026-05-14
+
+The 1.2.0 SDK uplift — every `/merchant/*` endpoint now rides the SDK — plus
+four feature follow-ups that round out the on-device parent-OWNER toolkit.
+Mirrors the Android 0.4.0 slice.
+
+### Added
+- **Universal Links for the invite URL.** `https://app.payhub.ly/m/accept-invite?…`
+  now opens the app directly on devices where it's installed (verified via the
+  `applinks:app.payhub.ly` Associated Domain against the server-side
+  `/.well-known/apple-app-site-association`). The legacy `payhub://accept-invite`
+  custom-scheme URL Type is kept through this release for in-flight emails —
+  slated for removal in 0.5.0.
+- **More → Diagnostics** screen with a *Send anonymous crash reports* toggle
+  (default **off**). Sentry / GlitchTip init is now runtime-gated on both a
+  baked-in DSN **and** the toggle; turning the toggle off `SentrySDK.close()`s
+  the SDK so subsequent crashes are not captured. The Diagnostics row is
+  hidden in builds without a `PAYHUB_SENTRY_DSN`.
+- **Sub-merchant detail → Cashiers tab** (invite / disable / clear-MFA, same
+  flow as 0.3.0 but now scoped inside a `Picker(.segmented)` alongside) and a
+  new **API keys tab** (generate / revoke). Plaintext API-key secrets are
+  surfaced **once** at create time in a copy-or-it-is-gone sheet — the server
+  stores only an argon2 hash.
+- **Localised server-error envelope.** A new `ErrorCatalog` resolves ~30
+  high-traffic codes (`merchant.last_owner`, `pay_link.quota_exceeded`,
+  `sub_merchant.code_taken`, `mfa.invalid_code`, …) to translated strings in
+  `Localizable.strings` (EN + AR). Unknown codes fall back to the server's
+  English message.
+
+### Changed
+- **Upgrades to `payhub-swift` 1.2.0.** `MerchantRawAPI` (the in-app raw
+  HTTP shim) and its transparent-refresh closure are deleted — every endpoint
+  now goes through the SDK, including `payments` / `settlements` / `devices` /
+  `account` / `mfa` / `org` / `subMerchants` (incl. nested `users` and
+  `apiKeys`) and `reports.dashboard(groupBySub: true)`. SDK-level transparent
+  401 → refresh → retry covers what the closure used to do.
+- **Refresh-token-at-rest** is now stored in a Keychain item gated by
+  `kSecAccessControl` `[.userPresence, .biometryCurrentSet]` whenever the
+  app-lock toggle is on. Toggling app lock on triggers a one-shot rewrap; off
+  unwraps transparently. The successful biometric unlock binds its `LAContext`
+  to the vault so the SDK's first refresh hits the OS's 5-second cached-auth
+  window without re-prompting.
+- `AppError` gains a `.validation(code, params, message)` case — server
+  validation envelopes now reach the UI with their stable code, ready for
+  catalogue lookup. `MerchantValidationError` / `MfaRequiredError` from the
+  SDK flow through the typed-error mapping.
+
+### Security
+- Refresh tokens at rest are no longer in plain Keychain when app lock is on;
+  an OS-enforced biometric / passcode gate is required to unwrap them.
+
+### Tests
+- `ErrorCatalogTests` — catalogue hits resolve, unknowns fall back, param
+  interpolation works.
+- `RefreshTokenVaultTests` — round-trip on/off, rewrap migration, missing-item
+  fallthrough.
+- `CrashReportingControllerTests` — start / close on the toggle's edges,
+  DSN-missing short-circuit.
+- `DeepLinkTests` extended for the `https://app.payhub.ly/m/accept-invite`
+  form and the legacy `payhub://` form together.
+
+### Known limitations
+- Still not compiled in the authoring environment — relies on Xcode / CI.
+- Webhook / PSP-gateway / parent-merchant API-key management remains
+  web-portal-only.
+
 ## [0.3.0] — 2026-05-12
 
 The rest of the merchant surface a shopkeeper or parent owner needs from a phone

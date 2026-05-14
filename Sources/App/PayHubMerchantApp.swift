@@ -29,6 +29,14 @@ struct PayHubMerchantApp: App {
                     await repository.bootstrap()
                 }
                 .onOpenURL { url in router.handleURL(url) }
+                // Universal Links (0.4.0): `https://app.payhub.ly/m/accept-invite?…`
+                // arrives via NSUserActivity, not `onOpenURL`. The hostname is
+                // pinned in `apple-app-site-association` on the server and again
+                // in the `applinks:app.payhub.ly` entitlement, so DeepLink.parse
+                // only has to discriminate accept-invite vs. ignore.
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    if let url = activity.webpageURL { router.handleURL(url) }
+                }
                 .onChange(of: scenePhase) { phase in lock.handleScenePhase(phase) }
         }
     }
