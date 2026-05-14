@@ -39,7 +39,7 @@ final class SettlementDetailViewModel: ObservableObject {
     @Published var filter: SettlementRowFilter = .all {
         didSet { if oldValue != filter { Task { await loadRows(reset: true) } } }
     }
-    @Published private(set) var file: SettlementFile?
+    @Published private(set) var file: Settlement?
     @Published private(set) var rows: [SettlementRow] = []
     @Published private(set) var isLoading = false
     @Published private(set) var isLoadingMore = false

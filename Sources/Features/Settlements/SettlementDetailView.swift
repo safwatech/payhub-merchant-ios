@@ -82,7 +82,7 @@ struct SettlementDetailView: View {
 }
 
 private struct HeaderCard: View {
-    let file: SettlementFile
+    let file: Settlement
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

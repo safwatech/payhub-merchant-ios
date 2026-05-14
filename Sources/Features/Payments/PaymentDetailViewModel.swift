@@ -3,7 +3,7 @@ import Combine
 
 @MainActor
 final class PaymentDetailViewModel: ObservableObject {
-    @Published private(set) var payment: PaymentDetail?
+    @Published private(set) var payment: PaymentView?
     @Published private(set) var isLoading = false
     @Published var error: AppError?
 

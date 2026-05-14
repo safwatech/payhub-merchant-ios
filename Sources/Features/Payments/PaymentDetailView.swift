@@ -33,7 +33,7 @@ struct PaymentDetailView: View {
         .refreshable { await vm.load() }
     }
 
-    @ViewBuilder private func content(for p: PaymentDetail) -> some View {
+    @ViewBuilder private func content(for p: PaymentView) -> some View {
         let status = PaymentStatus(rawString: p.status)
         let customerMobile: String? = p.metadata["customer_msisdn"]?.displayString
         let payLinkID: String? = p.metadata["pay_link_id"]?.displayString

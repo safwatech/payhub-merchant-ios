@@ -3,7 +3,7 @@ import Combine
 
 @MainActor
 final class SettlementsViewModel: ObservableObject {
-    @Published private(set) var files: [SettlementFile] = []
+    @Published private(set) var files: [Settlement] = []
     @Published private(set) var isLoading = false
     @Published private(set) var isLoadingMore = false
     @Published private(set) var hasMore = false
@@ -23,7 +23,7 @@ final class SettlementsViewModel: ObservableObject {
 
     func refresh() async { await load(reset: true) }
 
-    func loadMoreIfNeeded(currentItem: SettlementFile) async {
+    func loadMoreIfNeeded(currentItem: Settlement) async {
         guard let last = files.last, last.id == currentItem.id, hasMore else { return }
         await load(reset: false)
     }
