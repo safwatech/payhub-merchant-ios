@@ -1,4 +1,5 @@
 import SwiftUI
+import Payhub
 
 /// One sub-merchant: read-only identity, an edit section (name + active toggle),
 /// "Manage users", and a delete button (disabled while any `Payment` references

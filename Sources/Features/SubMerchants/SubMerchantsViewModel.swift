@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Payhub
 
 @MainActor
 final class SubMerchantsViewModel: ObservableObject {

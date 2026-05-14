@@ -1,4 +1,5 @@
 import SwiftUI
+import Payhub
 
 /// Read-only settlement-files list. Lives under More → Settlements rather than
 /// the bottom nav — reconciliation reports are checked far less often than
@@ -60,13 +61,17 @@ private struct SettlementRowView: View {
     let file: Settlement
 
     var body: some View {
+        // SDK 1.2 slimmed the settlement projection down to id / psp / period
+        // / rowCount / totalMinor / currency / status. The matched/mismatch
+        // counters live on the admin-side `/admin/settlements/{id}` view —
+        // not on the merchant projection — so we surface what we have.
         VStack(alignment: .leading, spacing: 6) {
-            Text(file.filename)
+            Text(file.period)
                 .font(.system(.subheadline, design: .monospaced).weight(.medium))
                 .lineLimit(1)
                 .truncationMode(.middle)
             HStack(spacing: 8) {
-                Text(PSP.label(file.pspCode))
+                Text(PSP.label(file.psp))
                     .font(.caption.weight(.medium))
                     .padding(.horizontal, 8).padding(.vertical, 3)
                     .background(Color.secondary.opacity(0.14), in: Capsule())
@@ -80,18 +85,11 @@ private struct SettlementRowView: View {
             }
             HStack(spacing: 6) {
                 Text(String(format:
-                    NSLocalizedString("settlements.matchedOfTotal", value: "%d/%d matched", comment: "1$=matched 2$=total"),
-                    file.matchedCount, file.rowCount))
+                    NSLocalizedString("settlements.rowCount", value: "%d rows", comment: "1$=count"),
+                    file.rowCount))
                     .font(.caption)
-                if file.mismatchCount > 0 {
-                    Text(String(format:
-                        NSLocalizedString("settlements.mismatchCount", value: "%d mismatch", comment: "1$=count"),
-                        file.mismatchCount))
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 6).padding(.vertical, 2)
-                        .foregroundStyle(.red)
-                        .background(Color.red.opacity(0.14), in: Capsule())
-                }
+                Text(Money.format(minor: file.totalMinor, currency: file.currency))
+                    .font(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
         }
         .padding(.vertical, 4)

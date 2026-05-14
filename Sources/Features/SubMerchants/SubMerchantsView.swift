@@ -1,4 +1,5 @@
 import SwiftUI
+import Payhub
 
 /// Parent-OWNER-only (aggregator entitlement) list of sub-merchants. Tap → detail;
 /// `+` mints a new one. Reached from More → Business → Sub-merchants.

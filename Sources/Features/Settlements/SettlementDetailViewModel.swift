@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Payhub
 
 /// Filter chips on the settlement-detail rows view.
 enum SettlementRowFilter: String, CaseIterable, Identifiable {
@@ -36,8 +37,12 @@ enum SettlementRowFilter: String, CaseIterable, Identifiable {
 
 @MainActor
 final class SettlementDetailViewModel: ObservableObject {
+    /// Active row-status filter — applied **client-side** in 0.4.0 because
+    /// the SDK 1.2 settlements-rows endpoint doesn't carry a server-side
+    /// status query (cursor + limit only). The unfiltered `rawRows` is the
+    /// authoritative copy; `rows` is the published derived view.
     @Published var filter: SettlementRowFilter = .all {
-        didSet { if oldValue != filter { Task { await loadRows(reset: true) } } }
+        didSet { if oldValue != filter { reapplyFilter() } }
     }
     @Published private(set) var file: Settlement?
     @Published private(set) var rows: [SettlementRow] = []
@@ -50,6 +55,9 @@ final class SettlementDetailViewModel: ObservableObject {
     private var fileID: String = ""
     private var didInitialLoad = false
     private static let pageSize = 100
+    private var nextCursor: String?
+    /// Full unfiltered row list — `rows` is `rawRows.filter(filter.wire)`.
+    private var rawRows: [SettlementRow] = []
 
     func bind(repository: MerchantRepository, fileID: String) {
         self.repository = repository
@@ -89,6 +97,8 @@ final class SettlementDetailViewModel: ObservableObject {
         guard let repository, !fileID.isEmpty else { return }
         if reset {
             isLoading = true
+            nextCursor = nil
+            rawRows.removeAll(keepingCapacity: true)
         } else {
             guard hasMore, !isLoadingMore else { return }
             isLoadingMore = true
@@ -96,14 +106,25 @@ final class SettlementDetailViewModel: ObservableObject {
         error = nil
         defer { isLoading = false; isLoadingMore = false }
         do {
-            let offset = reset ? 0 : rows.count
             let page = try await repository.settlementRows(
-                fileID: fileID, statusFilter: filter.wire,
-                limit: Self.pageSize, offset: offset)
-            if reset { rows = page } else { rows.append(contentsOf: page) }
-            hasMore = page.count >= Self.pageSize
+                fileID: fileID, after: nextCursor, limit: Self.pageSize)
+            rawRows.append(contentsOf: page.items)
+            nextCursor = page.cursor
+            hasMore = page.cursor != nil && !page.items.isEmpty
+            reapplyFilter()
         } catch {
             self.error = AppError.from(error)
+        }
+    }
+
+    /// Apply the client-side filter chip to `rawRows`. Cheap — settlements
+    /// are small batches (page size = 100, file row counts are bounded by
+    /// the daily PSP reconcile run).
+    private func reapplyFilter() {
+        if let wire = filter.wire {
+            rows = rawRows.filter { $0.status == wire }
+        } else {
+            rows = rawRows
         }
     }
 }

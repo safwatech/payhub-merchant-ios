@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Payhub
 
 @MainActor
 final class SettlementsViewModel: ObservableObject {
@@ -12,6 +13,7 @@ final class SettlementsViewModel: ObservableObject {
     private weak var repository: MerchantRepository?
     private var didInitialLoad = false
     private static let pageSize = 50
+    private var nextCursor: String?
 
     func bind(repository: MerchantRepository) { self.repository = repository }
 
@@ -32,6 +34,7 @@ final class SettlementsViewModel: ObservableObject {
         guard let repository else { return }
         if reset {
             isLoading = true
+            nextCursor = nil
         } else {
             guard hasMore, !isLoadingMore else { return }
             isLoadingMore = true
@@ -39,10 +42,10 @@ final class SettlementsViewModel: ObservableObject {
         error = nil
         defer { isLoading = false; isLoadingMore = false }
         do {
-            let offset = reset ? 0 : files.count
-            let page = try await repository.settlements(limit: Self.pageSize, offset: offset)
-            if reset { files = page } else { files.append(contentsOf: page) }
-            hasMore = page.count >= Self.pageSize
+            let page = try await repository.settlements(after: nextCursor, limit: Self.pageSize)
+            if reset { files = page.items } else { files.append(contentsOf: page.items) }
+            nextCursor = page.cursor
+            hasMore = page.cursor != nil && !page.items.isEmpty
         } catch {
             self.error = AppError.from(error)
         }

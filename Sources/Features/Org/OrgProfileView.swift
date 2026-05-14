@@ -1,4 +1,5 @@
 import SwiftUI
+import Payhub
 
 /// Organisation profile — `code`/`status`/`created_at` are always read-only;
 /// the rest is editable for a parent OWNER (`PATCH /merchant/org`, dirty fields

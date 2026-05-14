@@ -1,4 +1,5 @@
 import SwiftUI
+import Payhub
 
 /// Settlement-file detail: header card with the per-file counters, filter
 /// chips, and a paginated list of reconciliation rows. Rows with a
@@ -85,12 +86,16 @@ private struct HeaderCard: View {
     let file: Settlement
 
     var body: some View {
+        // SDK 1.2's merchant projection is the slim shape (id / psp / period /
+        // rowCount / totalMinor / currency / status). Matched/mismatch
+        // counters were never on the merchant-portal envelope — they're
+        // available admin-side only — so we surface the period + totals.
         VStack(alignment: .leading, spacing: 10) {
-            Text(file.filename)
+            Text(file.period)
                 .font(.system(.subheadline, design: .monospaced).weight(.medium))
                 .lineLimit(2)
             HStack(spacing: 8) {
-                Text(PSP.label(file.pspCode))
+                Text(PSP.label(file.psp))
                     .font(.caption.weight(.medium))
                     .padding(.horizontal, 8).padding(.vertical, 3)
                     .background(Color.secondary.opacity(0.14), in: Capsule())
@@ -102,36 +107,26 @@ private struct HeaderCard: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            if let from = file.periodFrom ?? file.periodTo {
-                Text(String(format:
-                    NSLocalizedString("settlements.detail.period", value: "Period: %@ → %@", comment: ""),
-                    file.periodFrom ?? "—",
-                    file.periodTo ?? from))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
             Divider().padding(.vertical, 2)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    counter(NSLocalizedString("settlements.counter.total", value: "Total", comment: ""), file.rowCount)
-                    counter(NSLocalizedString("settlements.counter.matched", value: "Matched", comment: ""), file.matchedCount)
-                    counter(NSLocalizedString("settlements.counter.mismatch", value: "Mismatch", comment: ""),
-                            file.mismatchCount, prominent: file.mismatchCount > 0)
-                    counter(NSLocalizedString("settlements.counter.missingInHub", value: "Missing — hub", comment: ""),
-                            file.missingInHubCount, prominent: file.missingInHubCount > 0)
-                    counter(NSLocalizedString("settlements.counter.missingInPsp", value: "Missing — PSP", comment: ""),
-                            file.missingInPspCount, prominent: file.missingInPspCount > 0)
+            HStack(spacing: 14) {
+                counter(NSLocalizedString("settlements.counter.total", value: "Total", comment: ""), file.rowCount)
+                Spacer(minLength: 4)
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(Money.format(minor: file.totalMinor, currency: file.currency))
+                        .font(.title3.weight(.semibold)).monospacedDigit()
+                    Text(NSLocalizedString("settlements.counter.totalAmount",
+                                            value: "Total volume", comment: ""))
+                        .font(.caption2).foregroundStyle(.secondary)
                 }
             }
         }
     }
 
-    private func counter(_ label: String, _ value: Int, prominent: Bool = false) -> some View {
+    private func counter(_ label: String, _ value: Int) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("\(value)")
                 .font(.title3.weight(.semibold))
                 .monospacedDigit()
-                .foregroundStyle(prominent ? Color.red : Color.primary)
             Text(label).font(.caption2).foregroundStyle(.secondary)
         }
     }

@@ -1,4 +1,5 @@
 import SwiftUI
+import Payhub
 
 /// The payments tab: a filter menu + a `List` of payment rows + pull-to-refresh,
 /// with a `NavigationLink` per row into [PaymentDetailView]. Read-only — the
@@ -81,7 +82,7 @@ struct PaymentsView: View {
 
 /// One row in the payments list — amount + status pill + order ref + PSP + relative time.
 struct PaymentRowView: View {
-    let row: PaymentRow
+    let row: PaymentView
     private var status: PaymentStatus { PaymentStatus(rawString: row.status) }
 
     var body: some View {
@@ -98,7 +99,7 @@ struct PaymentRowView: View {
             }
             HStack(spacing: 8) {
                 paymentStatusBadge
-                Text(PSP.label(row.pspCode))
+                Text(PSP.label(row.psp ?? ""))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer(minLength: 4)

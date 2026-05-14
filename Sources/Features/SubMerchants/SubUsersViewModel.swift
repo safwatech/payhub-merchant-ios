@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Payhub
 
 /// Roles a sub-user can hold; mirrors `SubMerchantRole` on the server
 /// (`sub_owner` / `sub_operator` / `sub_viewer`).
@@ -238,12 +239,12 @@ final class SubUsersViewModel: ObservableObject {
 
 private extension SubUser {
     func withStatus(_ newStatus: String) -> SubUser {
-        SubUser(id: id, subMerchantID: subMerchantID, username: username, role: role, status: newStatus,
+        SubUser(id: id, subMerchantId: subMerchantId, username: username, role: role, status: newStatus,
                 fullName: fullName, email: email, mobile: mobile, phone: phone,
                 mfaEnabled: mfaEnabled, lastLoginAt: lastLoginAt, createdAt: createdAt)
     }
     func withMfa(_ enabled: Bool) -> SubUser {
-        SubUser(id: id, subMerchantID: subMerchantID, username: username, role: role, status: status,
+        SubUser(id: id, subMerchantId: subMerchantId, username: username, role: role, status: status,
                 fullName: fullName, email: email, mobile: mobile, phone: phone,
                 mfaEnabled: enabled, lastLoginAt: lastLoginAt, createdAt: createdAt)
     }

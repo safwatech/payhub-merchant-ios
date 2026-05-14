@@ -187,8 +187,12 @@ final class MerchantRepository: ObservableObject {
     }
 
     func dashboardBySub(windowHours: Int) async throws -> [SubBreakdownRow] {
-        do { return try await client.reports.dashboardBySub(windowHours: windowHours).subBreakdown }
-        catch { throw mapped(error) }
+        do {
+            // SDK 1.2: `dashboard(groupBySub: true)` returns the same
+            // `MerchantDashboard` shape with `sub_breakdown` populated.
+            let dash = try await client.reports.dashboard(windowHours: windowHours, groupBySub: true)
+            return dash.subBreakdown ?? []
+        } catch { throw mapped(error) }
     }
 
     // MARK: - Pay-links
@@ -225,11 +229,16 @@ final class MerchantRepository: ObservableObject {
 
     // MARK: - Payments (SDK 1.2)
 
-    func payments(psp: String? = nil, status: String? = nil,
-                  subMerchantId: String? = nil, after: String? = nil,
-                  limit: Int = 50) async throws -> [PaymentRow] {
+    /// Cursor-paginated payments page. Returns the typed `PaymentList`
+    /// envelope so the caller can observe `cursor` and decide whether more
+    /// pages remain. (SDK 1.2 dropped the offset-based paging; `after` is the
+    /// opaque cursor from the previous page's `cursor` field.)
+    func payments(status: String? = nil,
+                  subMerchantId: String? = nil,
+                  after: String? = nil,
+                  limit: Int = 50) async throws -> PaymentList {
         do { return try await client.payments.list(
-            status: status, subMerchantId: subMerchantId, after: after, limit: limit).items }
+            status: status, subMerchantId: subMerchantId, after: after, limit: limit) }
         catch { throw mapped(error) }
     }
 
@@ -239,10 +248,12 @@ final class MerchantRepository: ObservableObject {
 
     // MARK: - Settlements (SDK 1.2)
 
+    /// Cursor-paginated settlements page (typed `SettlementList` envelope —
+    /// `items` + `cursor`).
     func settlements(subMerchantId: String? = nil, after: String? = nil,
-                     limit: Int = 50) async throws -> [Settlement] {
+                     limit: Int = 50) async throws -> SettlementList {
         do { return try await client.settlements.list(
-            subMerchantId: subMerchantId, after: after, limit: limit).items }
+            subMerchantId: subMerchantId, after: after, limit: limit) }
         catch { throw mapped(error) }
     }
 
@@ -250,9 +261,10 @@ final class MerchantRepository: ObservableObject {
         do { return try await client.settlements.get(id) } catch { throw mapped(error) }
     }
 
+    /// Cursor-paginated settlement rows page (`SettlementRows` envelope).
     func settlementRows(fileID: String, after: String? = nil,
-                        limit: Int = 200) async throws -> [SettlementRow] {
-        do { return try await client.settlements.rows(fileID, after: after, limit: limit).items }
+                        limit: Int = 200) async throws -> SettlementRows {
+        do { return try await client.settlements.rows(fileID, after: after, limit: limit) }
         catch { throw mapped(error) }
     }
 
