@@ -13,18 +13,48 @@ struct AppError: Error, Identifiable {
     let isAuthFailure: Bool
     /// PayHub `request_id`, if the server returned one — surface it in support copy.
     let requestId: String?
+    /// The stable server `code` (e.g. `merchant.last_owner`) when this error
+    /// originated from a `MerchantValidationError` / `MfaRequiredError`. Drives
+    /// the catalogue in `ErrorCatalog.swift`. `nil` for transport errors and
+    /// the older PayhubError paths.
+    let code: String?
+    /// `params` from the server's validation envelope, interpolated into the
+    /// catalogue string. Empty when not applicable.
+    let params: [String]
+    /// Whether this is the `mfa_required` step-up signal — change-password /
+    /// MFA-disable screens read this to reveal their TOTP-code field
+    /// without dropping the session.
+    let isMfaRequired: Bool
 
     init(title: String, message: String, isRetryable: Bool = false,
-         isAuthFailure: Bool = false, requestId: String? = nil) {
+         isAuthFailure: Bool = false, requestId: String? = nil,
+         code: String? = nil, params: [String] = [], isMfaRequired: Bool = false) {
         self.title = title
         self.message = message
         self.isRetryable = isRetryable
         self.isAuthFailure = isAuthFailure
         self.requestId = requestId
+        self.code = code
+        self.params = params
+        self.isMfaRequired = isMfaRequired
     }
 
     static func from(_ error: Error) -> AppError {
         if let app = error as? AppError { return app }
+        // SDK 1.2's typed errors. `MfaRequiredError` is NOT a session loss —
+        // the change-password / MFA-disable / cashier-clear-MFA flows reveal
+        // their TOTP field on this. `MerchantValidationError` carries the
+        // stable `code` + `params` for catalogue rendering.
+        if let mfa = error as? MfaRequiredError {
+            return AppError(title: "Check your input",
+                            message: mfa.message.isEmpty ? "Enter your authenticator code to continue." : mfa.message,
+                            code: mfa.code, isMfaRequired: true)
+        }
+        if let v = error as? MerchantValidationError {
+            return AppError(title: "Check your input",
+                            message: friendlyMessage(v.code, fallback: v.message),
+                            code: v.code, params: v.params)
+        }
         guard let pe = error as? PayhubError else {
             return AppError(title: "Something went wrong", message: error.localizedDescription)
         }
@@ -40,26 +70,27 @@ struct AppError: Error, Identifiable {
                 if Self.nonSessionAuthCodes.contains(code) {
                     return AppError(title: "Check your input",
                                     message: friendlyMessage(code, fallback: message),
-                                    requestId: requestId)
+                                    requestId: requestId, code: code,
+                                    isMfaRequired: code.hasSuffix("mfa_required"))
                 }
                 return AppError(title: "Session expired",
                                 message: "Please sign in again.",
-                                isAuthFailure: true, requestId: requestId)
+                                isAuthFailure: true, requestId: requestId, code: code)
             case .permission:
                 // License / entitlement 403s carry a useful server message
                 // ("contact your vendor to upgrade") — surface it verbatim.
                 let permFallback = code.hasPrefix("hub.license.") ? message : "Your role can't perform this action."
                 return AppError(title: code.hasPrefix("hub.license.") ? "Upgrade required" : "Not allowed",
                                 message: friendlyMessage(code, fallback: permFallback),
-                                requestId: requestId)
+                                requestId: requestId, code: code)
             case .notFound:
                 return AppError(title: "Not found",
                                 message: friendlyMessage(code, fallback: "That item no longer exists."),
-                                requestId: requestId)
+                                requestId: requestId, code: code)
             case .validation:
                 return AppError(title: "Check your input",
                                 message: friendlyMessage(code, fallback: message),
-                                requestId: requestId)
+                                requestId: requestId, code: code)
             case .idempotencyConflict:
                 return AppError(title: "Already in progress",
                                 message: friendlyMessage(code, fallback: "This request was already submitted."),

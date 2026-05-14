@@ -77,4 +77,22 @@ final class AppErrorTests: XCTestCase {
         XCTAssertTrue(app.message.contains("contact your vendor"))
         XCTAssertFalse(app.isAuthFailure)
     }
+
+    // MARK: - SDK 1.2 typed errors
+
+    func testMfaRequiredErrorIsStepUp() {
+        let app = AppError.from(MfaRequiredError(message: "MFA needed"))
+        XCTAssertFalse(app.isAuthFailure)
+        XCTAssertTrue(app.isMfaRequired)
+        XCTAssertEqual(app.code, "mfa_required")
+    }
+
+    func testMerchantValidationErrorCarriesCodeAndParams() {
+        let v = MerchantValidationError(code: "merchant.locked_out",
+                                         params: ["5m"], message: "Try again later")
+        let app = AppError.from(v)
+        XCTAssertEqual(app.code, "merchant.locked_out")
+        XCTAssertEqual(app.params, ["5m"])
+        XCTAssertFalse(app.isAuthFailure)
+    }
 }
