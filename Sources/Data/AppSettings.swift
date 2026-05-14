@@ -13,6 +13,7 @@ final class AppSettings: ObservableObject {
         static let serverURL = "payhub.serverURL"
         static let pushEnabled = "payhub.pushEnabled"
         static let appLockEnabled = "payhub.appLockEnabled"
+        static let crashReportingEnabled = "payhub.crashReportingEnabled"
         static let lastMerchantCode = "payhub.lastMerchantCode"
         static let lastUsername = "payhub.lastUsername"
         static let lastSubCode = "payhub.lastSubCode"
@@ -26,6 +27,11 @@ final class AppSettings: ObservableObject {
             ?? PayhubClient.defaultBaseURL.absoluteString
         self.pushEnabled = defaults.bool(forKey: Key.pushEnabled)
         self.appLockEnabled = defaults.bool(forKey: Key.appLockEnabled)
+        // Crash reporting is opt-in (default false). The user surfaces this
+        // toggle in More → Diagnostics; it's wired into
+        // `CrashReportingController.apply(enabled:)` so flipping it starts /
+        // stops Sentry without an app restart.
+        self.crashReportingEnabled = defaults.bool(forKey: Key.crashReportingEnabled)
     }
 
     @Published var serverURLString: String {
@@ -39,6 +45,13 @@ final class AppSettings: ObservableObject {
     /// Opt-in: gate the authenticated UI behind Face ID / Touch ID / device passcode.
     @Published var appLockEnabled: Bool {
         didSet { defaults.set(appLockEnabled, forKey: Key.appLockEnabled) }
+    }
+
+    /// Opt-in: send anonymous crash reports to GlitchTip / Sentry. Default
+    /// **false**. Wired to `CrashReportingController.apply(enabled:)` from
+    /// `PayHubMerchantApp` so flipping the toggle is live without a restart.
+    @Published var crashReportingEnabled: Bool {
+        didSet { defaults.set(crashReportingEnabled, forKey: Key.crashReportingEnabled) }
     }
 
     /// Parsed server URL, falling back to the default if the stored string is junk.

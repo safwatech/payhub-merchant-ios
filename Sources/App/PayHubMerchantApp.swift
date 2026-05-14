@@ -13,6 +13,10 @@ struct PayHubMerchantApp: App {
     @StateObject private var router = AppRouter()
     @StateObject private var lock = LockManager()
 
+    /// Runtime-gated crash reporting. Off until both the build-time DSN is
+    /// non-empty **and** the More → Diagnostics toggle is on.
+    private let crashReporting = CrashReportingController()
+
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -22,11 +26,17 @@ struct PayHubMerchantApp: App {
                 .environmentObject(lock)
                 .tint(Brand.amber)
                 .task {
+                    // Apply the persisted crash-reporting preference exactly
+                    // once at launch — flips on if it was on, no-op otherwise.
+                    crashReporting.apply(enabled: settings.crashReportingEnabled)
                     // Wire the delegate ↔ router/push, then validate the persisted session.
                     appDelegate.router = router
                     PushManager.shared.repository = repository
                     await PushManager.shared.refreshAuthorizationStatus()
                     await repository.bootstrap()
+                }
+                .onChange(of: settings.crashReportingEnabled) { newValue in
+                    crashReporting.apply(enabled: newValue)
                 }
                 .onOpenURL { url in router.handleURL(url) }
                 // Universal Links (0.4.0): `https://app.payhub.ly/m/accept-invite?…`

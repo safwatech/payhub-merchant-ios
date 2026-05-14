@@ -114,6 +114,10 @@ enum MoreRoute: Hashable {
     case mfaSettings
     case orgProfile
     case subMerchants
+    /// More → Diagnostics (0.4.0) — crash-reporting opt-in. Hidden via the
+    /// row's visibility, not the route enum, so the destination still resolves
+    /// for unit tests that go directly to the page.
+    case diagnostics
 }
 
 /// Routes pushed onto the sub-merchant management stack (lives under the More

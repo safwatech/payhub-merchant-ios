@@ -1,9 +1,13 @@
 import UIKit
 import UserNotifications
-import Sentry
 
 /// Bridges the bits of UIKit SwiftUI doesn't surface: APNs token callbacks and
 /// notification-tap handling. Wired via `@UIApplicationDelegateAdaptor`.
+///
+/// 0.4.0 note: crash reporting init moved out of `didFinishLaunching` and onto
+/// `CrashReportingController.apply(enabled:)` (driven by `PayHubMerchantApp`
+/// reacting to `AppSettings.crashReportingEnabled`). The toggle is off by
+/// default — earlier releases unconditionally started Sentry on launch.
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     /// Set by `PayHubMerchantApp` so notification taps can route through the app's router.
@@ -11,31 +15,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        initCrashReporting()
         UNUserNotificationCenter.current().delegate = self
         // If the app was cold-launched from a notification, the tap is delivered
         // to `didReceive` after the scene connects — nothing to do here.
         return true
-    }
-
-    /// Crash / error reporting → GlitchTip (Sentry protocol). DSN injected at build
-    /// time (`PAYHUB_SENTRY_DSN` → Info.plist → `AppInfo.sentryDSN`); empty ⇒ skip init
-    /// entirely. No PII, crashes/errors only (no performance tracing).
-    private func initCrashReporting() {
-        let dsn = AppInfo.sentryDSN
-        guard !dsn.isEmpty else { return }
-        SentrySDK.start { options in
-            options.dsn = dsn
-            options.releaseName = "payhub-merchant-ios@\(AppInfo.version)"
-            options.tracesSampleRate = 0.0
-            options.enableAutoSessionTracking = true
-            options.sendDefaultPii = false
-            #if DEBUG
-            options.environment = "debug"
-            #else
-            options.environment = "release"
-            #endif
-        }
     }
 
     // MARK: APNs token

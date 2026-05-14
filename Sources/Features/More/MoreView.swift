@@ -50,6 +50,7 @@ struct MoreView: View {
                 case .mfaSettings: MfaSettingsView()
                 case .orgProfile: OrgProfileView()
                 case .subMerchants: SubMerchantsView()
+                case .diagnostics: DiagnosticsView()
                 }
             }
             .sheet(isPresented: $showForgot) {
@@ -230,6 +231,21 @@ struct MoreView: View {
 
     private var accountSection: some View {
         Section {
+            // Diagnostics row appears only in builds where a Sentry DSN was
+            // baked in at build time. No-DSN builds hide it entirely so a
+            // vendor packaging the app without crash reporting never confuses
+            // the user with an unreachable toggle.
+            if !AppInfo.sentryDSN.isEmpty {
+                NavigationLink(value: MoreRoute.diagnostics) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(LocalizedStringKey("more.diagnostics"))
+                            Text(LocalizedStringKey("more.diagnostics.hint"))
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    } icon: { Image(systemName: "ladybug") }
+                }
+            }
             Button {
                 showForgot = true
             } label: { Label("Request password reset", systemImage: "key") }
