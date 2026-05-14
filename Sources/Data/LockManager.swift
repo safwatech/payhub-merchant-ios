@@ -9,8 +9,11 @@ protocol DeviceAuthenticating: Sendable {
     /// True if the device has a biometric *or* a passcode enrolled — i.e. there's
     /// something to authenticate against.
     func canAuthenticate() -> Bool
-    /// Prompt with biometrics, falling back to the device passcode. `true` on success.
-    func authenticate(reason: String) async -> Bool
+    /// Prompt with biometrics, falling back to the device passcode. Returns
+    /// the `LAContext` that handled the evaluate on success (so callers can
+    /// hand it to the Keychain for the same OS-cached-auth window) and `nil`
+    /// on cancel / failure.
+    func authenticate(reason: String) async -> LAContext?
 }
 
 /// Production `DeviceAuthenticating` backed by `LAContext` / `LAPolicy.deviceOwnerAuthentication`.
@@ -19,11 +22,11 @@ struct LAContextAuthenticator: DeviceAuthenticating {
         var error: NSError?
         return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
     }
-    func authenticate(reason: String) async -> Bool {
+    func authenticate(reason: String) async -> LAContext? {
         let context = LAContext()
         return await withCheckedContinuation { continuation in
             context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, _ in
-                continuation.resume(returning: success)
+                continuation.resume(returning: success ? context : nil)
             }
         }
     }
@@ -51,16 +54,19 @@ final class LockManager: ObservableObject {
     private let authenticator: DeviceAuthenticating
     private let lockAfter: TimeInterval
     private let now: () -> Date
+    private let tokenStore: KeychainTokenStore
     private var backgroundedAt: Date?
     private var evaluating = false
 
     init(settings: AppSettings = .shared,
          authenticator: DeviceAuthenticating = LAContextAuthenticator(),
          lockAfter: TimeInterval = 120,
+         tokenStore: KeychainTokenStore = .shared,
          now: @escaping () -> Date = { Date() }) {
         self.settings = settings
         self.authenticator = authenticator
         self.lockAfter = lockAfter
+        self.tokenStore = tokenStore
         self.now = now
         self.isEnabled = settings.appLockEnabled
         self.isLocked = settings.appLockEnabled   // cold start → locked iff enabled
@@ -91,22 +97,40 @@ final class LockManager: ObservableObject {
     func evaluate(reason: String) async {
         guard isLocked, !evaluating else { return }
         evaluating = true
-        let ok = await authenticator.authenticate(reason: reason)
+        let context = await authenticator.authenticate(reason: reason)
         evaluating = false
-        if ok { isLocked = false }
+        if let context {
+            // Bind the freshly-evaluated context to the refresh-token vault so
+            // the SDK's first 401-refresh-retry within the OS's ~5s cached-auth
+            // window doesn't pop a second prompt for the user.
+            tokenStore.bind(authenticationContext: context)
+            isLocked = false
+        }
     }
 
     /// Flip the feature. Enabling first confirms the user can authenticate (so they
     /// don't lock themselves out); if they cancel, the change is rejected and the
     /// observable state re-published so a bound `Toggle` snaps back. Enabling counts
     /// as a fresh unlock — no lock screen pops up mid-session.
+    ///
+    /// After persisting the new value, the refresh-token-at-rest is rewrapped
+    /// (lock-on → biometric-gated Keychain item; lock-off → plain
+    /// `afterFirstUnlock`). A bound LAContext from the just-completed evaluate
+    /// is handed to the vault so the rewrap doesn't itself re-prompt.
     func setEnabled(_ enabled: Bool, confirmReason: String) async {
-        if enabled, !(await authenticator.authenticate(reason: confirmReason)) {
-            objectWillChange.send()   // bounce a bound Toggle back to "off"
-            return
+        if enabled {
+            guard let context = await authenticator.authenticate(reason: confirmReason) else {
+                objectWillChange.send()   // bounce a bound Toggle back to "off"
+                return
+            }
+            tokenStore.bind(authenticationContext: context)
         }
         isEnabled = enabled
         settings.appLockEnabled = enabled
+        // Rewrap reads the refresh-token through the just-bound context and
+        // re-writes it with the new access-control shape — one prompt
+        // amortised across the toggle.
+        tokenStore.rewrapRefreshToken()
         if !enabled { isLocked = false }
     }
 }

@@ -1,4 +1,5 @@
 import XCTest
+import LocalAuthentication
 import SwiftUI
 @testable import PayHubMerchant
 
@@ -12,7 +13,14 @@ final class LockManagerTests: XCTestCase {
         var nextResult = true
         var calls = 0
         func canAuthenticate() -> Bool { canAuth }
-        func authenticate(reason: String) async -> Bool { calls += 1; return nextResult }
+        // The protocol returns the `LAContext` that authenticated on success
+        // so the LockManager can hand it to the Keychain — for tests, we
+        // return a fresh context (its identity doesn't matter; the
+        // Keychain in the test bundle has nothing to bind to).
+        func authenticate(reason: String) async -> LAContext? {
+            calls += 1
+            return nextResult ? LAContext() : nil
+        }
     }
 
     private func freshSettings(appLockEnabled: Bool = false) -> AppSettings {
