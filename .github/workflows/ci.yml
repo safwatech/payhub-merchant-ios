@@ -31,6 +31,17 @@ jobs:
       - name: Install tools
         run: brew install xcodegen swiftlint xcbeautify
 
+      # The monorepo's project.yml depends on the Swift SDK via `path:
+      # ../../sdks/swift`. On the mirror that relative path is gone, so
+      # rewrite it to the public mirror URL before xcodegen validates.
+      # branch: main keeps us on whatever the SDK mirror's HEAD is until
+      # `payhub-swift` 1.2.0 ships and we can pin to a tag.
+      - name: Rewrite SDK package source for mirror
+        run: |
+          if [ ! -d ../../sdks/swift ]; then
+            sed -i.bak -E "s|path: \.\./\.\./sdks/swift|url: https://github.com/safwatech/payhub-swift\n    branch: main|" project.yml
+          fi
+
       - name: Generate Xcode project
         run: xcodegen generate
 
@@ -106,13 +117,15 @@ jobs:
           echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 -d > \
               "$HOME/Library/MobileDevice/Provisioning Profiles/payhub-merchant-app-store.mobileprovision"
 
-      - name: Generate Xcode project (with real Team ID)
+      - name: Generate Xcode project (with real Team ID + mirror SDK ref)
         run: |
-          # project.yml carries Team ID as an env-overridable. xcodegen reads
-          # current env, so a one-shot sed before generate is the simplest path
-          # without checking in the Team ID. Idempotent: re-runs on the same
-          # workspace pass through unchanged.
+          # project.yml's Team ID + SDK package path are both rewritten in-place
+          # before xcodegen so the produced .xcodeproj is signing-ready and
+          # points at the public SDK mirror.
           sed -i.bak "s/DEVELOPMENT_TEAM: \"\"/DEVELOPMENT_TEAM: \"$IOS_TEAM_ID\"/" project.yml
+          if [ ! -d ../../sdks/swift ]; then
+            sed -i.bak2 -E "s|path: \.\./\.\./sdks/swift|url: https://github.com/safwatech/payhub-swift\n    branch: main|" project.yml
+          fi
           xcodegen generate
 
       - name: Set MARKETING_VERSION + CURRENT_PROJECT_VERSION
