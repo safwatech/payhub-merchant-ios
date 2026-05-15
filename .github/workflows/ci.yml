@@ -39,7 +39,7 @@ jobs:
       - name: Rewrite SDK package source for mirror
         run: |
           if [ ! -d ../../sdks/swift ]; then
-            sed -i.bak -E "s|path: \.\./\.\./sdks/swift|url: https://github.com/safwatech/payhub-swift\n    branch: main|" project.yml
+            sed -i.bak -E "s|path: \.\./\.\./sdks/swift|url: https://github.com/safwatech/payhub-swift\n    from: \"1.2.0\"|" project.yml
           fi
 
       - name: Generate Xcode project
@@ -124,7 +124,7 @@ jobs:
           # points at the public SDK mirror.
           sed -i.bak "s/DEVELOPMENT_TEAM: \"\"/DEVELOPMENT_TEAM: \"$IOS_TEAM_ID\"/" project.yml
           if [ ! -d ../../sdks/swift ]; then
-            sed -i.bak2 -E "s|path: \.\./\.\./sdks/swift|url: https://github.com/safwatech/payhub-swift\n    branch: main|" project.yml
+            sed -i.bak2 -E "s|path: \.\./\.\./sdks/swift|url: https://github.com/safwatech/payhub-swift\n    from: \"1.2.0\"|" project.yml
           fi
           xcodegen generate
 
