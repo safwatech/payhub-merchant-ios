@@ -72,32 +72,20 @@ jobs:
     runs-on: macos-14
     timeout-minutes: 60
     env:
-      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-      APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-      IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+      APP_STORE_CONNECT_API_KEY_ID:     ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_ISSUER_ID:  ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_P8:     ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+      IOS_DIST_CERT_P12_BASE64:         ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+      IOS_DIST_CERT_PASSWORD:           ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64:  ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_TEAM_ID:                      ${{ secrets.IOS_TEAM_ID }}
     steps:
       - uses: actions/checkout@v4
       - run: brew install xcodegen
 
-      - name: Validate secrets
-        run: |
-          for v in APP_STORE_CONNECT_API_KEY_ID APP_STORE_CONNECT_API_ISSUER_ID \
-                   APP_STORE_CONNECT_API_KEY_P8 IOS_DIST_CERT_P12_BASE64 \
-                   IOS_DIST_CERT_PASSWORD IOS_PROVISIONING_PROFILE_BASE64 IOS_TEAM_ID; do
-            eval "val=\${$v:-}"
-            if [ -z "$val" ]; then
-              # secrets aren't visible in env yet — fall back to a runner-level
-              # availability probe via the per-secret env vars below.
-              :
-            fi
-          done
-
       # Install signing identity into a temporary keychain so xcodebuild can
       # find it without leaking it to the default keychain.
       - name: Import distribution certificate
-        env:
-          IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
-          IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
         run: |
           test -n "$IOS_DIST_CERT_P12_BASE64" || { echo "::error::IOS_DIST_CERT_P12_BASE64 missing"; exit 1; }
           echo "$IOS_DIST_CERT_P12_BASE64" | base64 -d > "$RUNNER_TEMP/cert.p12"
@@ -112,8 +100,6 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
 
       - name: Install provisioning profile
-        env:
-          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
         run: |
           test -n "$IOS_PROVISIONING_PROFILE_BASE64" || { echo "::error::IOS_PROVISIONING_PROFILE_BASE64 missing"; exit 1; }
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
@@ -171,8 +157,6 @@ jobs:
             -exportPath build/export
 
       - name: Upload to TestFlight
-        env:
-          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
         run: |
           test -n "$APP_STORE_CONNECT_API_KEY_P8" || { echo "::error::APP_STORE_CONNECT_API_KEY_P8 missing"; exit 1; }
           mkdir -p "$HOME/.appstoreconnect/private_keys"
